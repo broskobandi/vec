@@ -5,7 +5,7 @@ void *vec_generic_new(size_t size) {
 	RET_OK(vec_new(size));
 }
 
-void vec_generic_del(void **vec) {
+void vec_generic_del(void *vec) {
 	if (!vec) RET_ERR("vec cannot be NULL.");
 	vec_t *v = (vec_t*)vec;
 	if (v->magic != MAGIC) RET_ERR("Invalid pointer.");
@@ -14,8 +14,8 @@ void vec_generic_del(void **vec) {
 
 void vec_generic_push(void **vec, const void *value) {
 	if (!vec || !value) RET_ERR("Invalid argument.");
-	vec_t **v = (vec_t**)vec;
-	if ((*v)->magic != MAGIC) RET_ERR("Invalid pointer.");
+	vec_t *v = (vec_t*)vec;
+	if (v->magic != MAGIC) RET_ERR("Invalid pointer.");
 	vec_push(v, value);
 }
 

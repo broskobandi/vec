@@ -13,30 +13,30 @@
 		return (vec_##T##_t*)vec_generic_new(sizeof(T));\
 	}\
 	__attribute__((unused))\
-	static inline void vec_##T##_del(vec_##T##_t *vec) {\
-		vec_generic_del(vec);\
+	static inline void vec_##T##_del(vec_##T##_t **vec) {\
+		vec_generic_del((void**)vec);\
 	}\
 	__attribute__((unused))\
-	static inline void vec_##T##_push(vec_##T##_t *vec, T value) {\
-		vec_generic_push(vec, &value);\
+	static inline void vec_##T##_push(vec_##T##_t **vec, T value) {\
+		vec_generic_push((void**)vec, &value);\
 	}\
 	__attribute__((unused))\
-	static inline T vec_##T##_pop(vec_##T##_t *vec) {\
+	static inline T vec_##T##_pop(vec_##T##_t **vec) {\
 		T value;\
-		if (vec_generic_pop(vec, &value))\
+		if (vec_generic_pop((void**)vec, &value))\
 			return (T){0};\
 		return value;\
 	}\
 	__attribute__((unused))\
-	static inline T vec_##T##_at(vec_##T##_t *vec, size_t index) {\
+	static inline T vec_##T##_at(const vec_##T##_t *vec, size_t index) {\
 		T value;\
-		if (vec_generic_at(vec, index, &value))\
+		if (vec_generic_at((void*)vec, index, &value))\
 			return (T){0};\
 		return value;\
 	}\
 	__attribute__((unused))\
-	static inline void vec_##T##_remove(vec_##T##_t *vec, size_t index) {\
-		vec_generic_remove(vec, index);\
+	static inline void vec_##T##_remove(vec_##T##_t **vec, size_t index) {\
+		vec_generic_remove((void**)vec, index);\
 	}
 
 /** Creates a new generic vector.
@@ -45,20 +45,20 @@
 void *vec_generic_new(size_t size);
 
 /** Deletes a generic vector.
- * \param vec The vector object to be deleted. */
-void vec_generic_del(void *vec);
+ * \param vec A pointer to the vector to be deleted. */
+void vec_generic_del(void **vec);
 
 /** Appends data at the end of 'vec'.
- * \param vec The vector to be modified.
+ * \param vec A pointer to the vector to be modified.
  * \param value A pointer to the variable holding the value
  * to be pushed at the end of 'vec'*/
-void vec_generic_push(void *vec, const void *value);
+void vec_generic_push(void **vec, const void *value);
 
 /** Removes the last element of 'vec' and copies its value into 'value'.
- * \param vec The vector to be modified. 
+ * \param vec A pointer to the vector to be modified. 
  * \param value A pointer to the variable to copy the data into. 
  * \return Returns 0 on success or 1 on failure. */
-int vec_generic_pop(void *vec, void *value);
+int vec_generic_pop(void **vec, void *value);
 
 /** Copies the value of the element stored at the 'index'-th element of 'vec'.
  * \param vec The vector whose data to be accessed. 
@@ -69,8 +69,6 @@ int vec_generic_at(const void *vec, size_t index, void *value);
 /** Remove the element found at the 'index'-th element in 'vec'.
  * \param vec The vector to be modified.
  * \param index The index of the lement to be removed. */
-void vec_generic_remove(void *vec, size_t index);
-
-TYPEDEF_VEC(int);
+void vec_generic_remove(void **vec, size_t index);
 
 #endif

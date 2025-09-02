@@ -23,7 +23,7 @@
 #define SET_DATA_PTR(vec)\
 do {\
 	(vec)->data =\
-	(void*)((unsigned char*)vec + ROUNDUP(sizeof(vec_t)));\
+	(void*)((unsigned char*)(vec) + ROUNDUP(sizeof(vec_t)));\
 } while(0)
 
 /** Generic vector object to represent vecs of all types. */
@@ -46,13 +46,13 @@ typedef struct vec {
 static inline vec_t *vec_new(size_t size) {
 	size_t alloc_size = ROUNDUP(sizeof(vec_t)) + size * DEFAULT_CAPACITY;
 	vec_t *vec = malloc(alloc_size);
-	if (!vec) ERR("malloc() failed.", NULL);
+	if (!vec) RET_ERR("malloc() failed.", NULL);
 	vec->size = size;
 	vec->capacity = DEFAULT_CAPACITY;
 	SET_DATA_PTR(vec);
 	vec->magic = MAGIC;
 	vec->len = 0;
-	OK(vec);
+	RET_OK(vec);
 }
 
 /** Frees all data associated with 'vec'.
@@ -64,18 +64,18 @@ static inline void vec_del(vec_t *vec) {
 /** Appends new data at the end of 'vec'.
  * \param vec The vector to extend.
  * \param value A pointer to a variable holding the value to be pushed to the end of vec. */
-static inline void vec_push(vec_t *vec, const void *value) {
-	if (vec->len + 1 > vec->capacity) {
-		size_t new_capacity = vec->capacity * 2;
-		vec_t *tmp = realloc(vec, new_capacity * vec->size + ROUNDUP(sizeof(vec_t)));
-		if (!tmp) ERR("Failed to realloc memory.");
-		vec = tmp;
-		vec->capacity = new_capacity;
-		SET_DATA_PTR(vec);
+static inline void vec_push(vec_t **vec, const void *value) {
+	if ((*vec)->len + 1 > (*vec)->capacity) {
+		size_t new_capacity = (*vec)->capacity * 2;
+		vec_t *tmp = realloc(*vec, new_capacity * (*vec)->size + ROUNDUP(sizeof(vec_t)));
+		if (!tmp) RET_ERR("Failed to realloc memory.");
+		*vec = tmp;
+		(*vec)->capacity = new_capacity;
+		SET_DATA_PTR(*vec);
 	}
-	unsigned char *chardata = (unsigned char*)vec->data;
-	memcpy(&chardata[vec->len * vec->size], value, vec->size);
-	vec->len++;
+	unsigned char *chardata = (unsigned char*)(*vec)->data;
+	memcpy(&chardata[(*vec)->len * (*vec)->size], value, (*vec)->size);
+	(*vec)->len++;
 }
 
 #endif

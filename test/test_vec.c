@@ -16,15 +16,17 @@ void test_vec_new() {
 
 void test_vec_push() {
 	{ // Normal case
-		// vec_t *vec = vec_new(sizeof(size_t));
+		vec_t *vec = vec_new(sizeof(size_t));
 
-		// for (size_t i = 0; i < vec->capacity * 2; i++) {
-			// vec_push(vec, &i);
-			// ASSERT(vec->capacity == );
-			// ASSERT(vec->len == i + 1);
-			// size_t *data = (size_t*)vec->data;
-			// ASSERT(data[i] == i);
-		// }
+		for (size_t i = 0; i < 10; i++) {
+			vec_push(&vec, &i);
+			ASSERT(vec->capacity == (i / vec->capacity + 1) * vec->capacity);
+			printf("%lu\n", vec->capacity);
+			printf("%lu\n", i);
+			ASSERT(vec->len == i + 1);
+			size_t *data = (size_t*)vec->data;
+			ASSERT(data[i] == i);
+		}
 
 	}
 }
