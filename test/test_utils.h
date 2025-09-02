@@ -3,4 +3,6 @@
 
 #include <test.h>
 
+void test_vec_new();
+
 #endif
