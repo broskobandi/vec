@@ -12,7 +12,7 @@ void vec_generic_del(void *vec) {
 	vec_del(v);
 }
 
-void vec_generic_push(void *vec, void *value) {
+void vec_generic_push(void *vec, const void *value) {
 	if (!vec || !value) ERR("Invalid argument.");
 	vec_t *v = (vec_t*)vec;
 	if (v->magic != MAGIC) ERR("Invalid pointer.");
@@ -24,5 +24,5 @@ void vec_generic_push(void *vec, void *value) {
 //
 // }
 
-int vec_generic_at(void *vec, size_t index, void *value);
-void vec_generic_remove(void *vec, size_t index);
+// int vec_generic_at(const void *vec, size_t index, void *value);
+// void vec_generic_remove(void *vec, size_t index);

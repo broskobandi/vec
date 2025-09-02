@@ -4,5 +4,6 @@
 #include <test.h>
 
 void test_vec_new();
+void test_vec_push();
 
 #endif
