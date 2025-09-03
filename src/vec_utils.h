@@ -100,8 +100,9 @@ static inline int vec_pop(vec_t **vec, void *value) {
 	RET_OK(0);
 }
 
-// static inline void vec_at(const vec_t *vec, size_t index, void *value) {
-// 	memcpy(value, &vec->data[index * vec->size], vec->size);
-// }
+static inline void vec_at(const vec_t *vec, size_t index, void *value) {
+	unsigned char *chardata = (unsigned char*)vec->data;
+	memcpy(value, &chardata[index * vec->size], vec->size);
+}
 
 #endif

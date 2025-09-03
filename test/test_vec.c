@@ -58,10 +58,21 @@ void test_vec_pop() {
 
 void test_vec_at() {
 	{ // Normal case
-		// vec_t *vec = vec_new(sizeof(int));
-		// int value1 = 1;
-		// int value2 = 2;
-		// int value3 = 3;
-		// vec_push(&vec, &value1);
+		vec_t *vec = vec_new(sizeof(int));
+		int value1 = 1;
+		int value2 = 2;
+		int value3 = 3;
+		ASSERT(!vec_push(&vec, &value1));
+		ASSERT(!vec_push(&vec, &value2));
+		ASSERT(!vec_push(&vec, &value3));
+		int value4 = 0;
+		int value5 = 0;
+		int value6 = 0;
+		vec_at(vec, 0, &value4);
+		vec_at(vec, 1, &value5);
+		vec_at(vec, 2, &value6);
+		ASSERT(value4 == value1);
+		ASSERT(value5 == value2);
+		ASSERT(value6 == value3);
 	}
 }
