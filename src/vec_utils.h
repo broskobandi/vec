@@ -109,4 +109,21 @@ static inline void vec_at(const vec_t *vec, size_t index, void *value) {
 	memcpy(value, &chardata[index * vec->size], vec->size);
 }
 
+static inline void vec_remove(vec_t **vec, size_t index) {
+	unsigned char *chardata = (unsigned char*)(*vec)->data;
+	size_t len_to_copy = (*vec)->len - index - 1;
+	size_t dst_index = index * (*vec)->size;
+	size_t src_index = dst_index + (*vec)->size;
+	memcpy(&chardata[dst_index], &chardata[src_index], len_to_copy * (*vec)->size);
+	if ((*vec)->len - 1 <= (*vec)->capacity / 2 && (*vec)->capacity / 2 >= DEFAULT_CAPACITY) {
+		size_t new_capacity = (*vec)->capacity / 2;
+		vec_t *tmp = realloc(*vec, ROUNDUP(sizeof(vec_t)) + new_capacity * (*vec)->size);
+		if (!tmp) RET_ERR("Failed to realloc memory.");
+		*vec = tmp;
+		(*vec)->capacity = new_capacity;
+		SET_DATA_PTR(*vec);
+	}
+	(*vec)->len--;
+}
+
 #endif

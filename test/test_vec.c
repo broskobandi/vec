@@ -76,3 +76,26 @@ void test_vec_at() {
 		ASSERT(value6 == value3);
 	}
 }
+
+void test_vec_remove() {
+	{ // Normal case
+		vec_t *vec = vec_new(sizeof(size_t));
+		for (size_t i = 0; i < DEFAULT_CAPACITY + 1; i++) {
+			ASSERT(!vec_push(&vec, &i));
+		}
+		ASSERT(vec->len == DEFAULT_CAPACITY + 1);
+		ASSERT(vec->capacity == DEFAULT_CAPACITY * 2);
+		vec_remove(&vec, DEFAULT_CAPACITY / 2);
+		ASSERT(vec->capacity == DEFAULT_CAPACITY);
+		ASSERT(vec->len == DEFAULT_CAPACITY);
+		for (size_t i = 0; i < DEFAULT_CAPACITY; i++) {
+			size_t value = 0;
+			vec_at(vec, i, &value);
+			if (i >= DEFAULT_CAPACITY / 2) {
+				ASSERT(value == i + 1);
+			} else {
+				ASSERT(value == i);
+			}
+		}
+	}
+}

@@ -35,4 +35,9 @@ int vec_generic_at(const void *vec, size_t index, void *value) {
 	RET_OK(0);
 }
 
-// void vec_generic_remove(void *vec, size_t index);
+void vec_generic_remove(void **vec, size_t index) {
+	if (!vec || !*vec)  RET_ERR("Invalid argument.");
+	vec_t *v = (vec_t*)vec;
+	if (v->magic != MAGIC) RET_ERR("Invalid pointer.");
+	if (index >= v->len) RET_ERR("Requested index is out of bounds.");
+}
