@@ -115,6 +115,18 @@ void test_vec_remove() {
 	}
 }
 
+void test_vec_append() {
+	{ // Normal case
+		const char *str = "some text";
+		vec_t *vec = vec_new(sizeof(char));
+		ASSERT(!vec_append(&vec, str, strlen(str)));
+		ASSERT(!memcmp((char*)vec->data, str, strlen(str)));
+		ASSERT(vec->len == strlen(str));
+		ASSERT(vec->len == strlen(str));
+		vec_del(&vec);
+	}
+}
+
 /** 
  * Generic vector - public functiong
  * */
@@ -279,6 +291,31 @@ void test_vec_generic_remove() {
 	}
 }
 
+void test_vec_generic_append() {
+	{ // Normal case
+		vec_t *vec = vec_generic_new(sizeof(char));
+		const char *str = "some text";
+		ASSERT(!vec_generic_append(&vec, str, strlen(str), sizeof(char)));
+		ASSERT(!memcmp((char*)vec->data, str, strlen(str)));
+		vec_del(&vec);
+	}
+	{ // Invalid argument
+		vec_t *vec = NULL;
+		const char *str = "some text";
+		ASSERT(vec_generic_append(NULL, str, strlen(str), sizeof(char)));
+		ASSERT(vec_generic_append(&vec, str, strlen(str), sizeof(char)));
+		vec = vec_generic_new(sizeof(char));
+		ASSERT(vec_generic_append(&vec, NULL, strlen(str), sizeof(char)));
+		vec_del(&vec);
+	} 
+	{ // Invalid pointer 
+		vec_t *vec = vec_generic_new(sizeof(int));
+		const char *str = "some text";
+		ASSERT(vec_generic_append(&vec, str, strlen(str), sizeof(char)));
+		vec_del(&vec);
+	}
+}
+
 /** 
  * Type-specific vector - public functions
  * */
@@ -403,5 +440,15 @@ void test_vec_int_len() {
 		vec_int_push(&vec, 2);
 		vec_int_push(&vec, 3);
 		ASSERT(vec_int_len(vec) == 3);
+		vec_int_del(&vec);
+	}
+}
+
+void test_vec_int_append() {
+	{ // Normal case
+		vec_int_t *vec = vec_int_new();
+		int arr[] = {1, 2, 3, 4, 5};
+		ASSERT(!vec_int_append(&vec, arr, sizeof(arr)));
+		vec_int_del(&vec);
 	}
 }

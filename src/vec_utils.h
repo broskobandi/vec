@@ -168,4 +168,20 @@ static inline int vec_remove(vec_t **vec, size_t index) {
 	RET_OK(0);
 }
 
+/** Appends an array at the end of a vector.
+ * \param vec The vector to be modified.
+ * \param arr The array to be appended.
+ * \param len The length of the array to be appended.
+ * \return 0 on success or 1 on failure. */
+static inline int vec_append(vec_t **vec, const void *arr, size_t len) {
+	while ((*vec)->len + len > (*vec)->capacity) {
+		if (resize(vec, (*vec)->capacity * 2))
+			RET_ERR("Failed to resize vector.", 1);
+	}
+	unsigned char *chardata = (unsigned char*)(*vec)->data;
+	memcpy(&chardata[(*vec)->len * (*vec)->size], arr, len * (*vec)->size);
+	(*vec)->len += len;
+	RET_OK(0);
+}
+
 #endif

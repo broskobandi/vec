@@ -82,6 +82,12 @@ int main(void) {
 	printf("Length of obj vec: %lu\n", VEC_LEN(obj_t, vec_obj));
 	printf("Length of ptr vec: %lu\n", VEC_LEN(intptr, vec_intptr));
 
+	/* Append an array at the end of the vector. */
+	VEC_APPEND(int, &vec_int, ((int[]){1, 2, 3}), 3);
+	VEC_APPEND(float, &vec_float, ((float[]){1.1f, 2.2f, 3.3f}), 3);
+	VEC_APPEND(obj_t, &vec_obj, ((obj_t[]){{0}, {0}, {0}}), 3);
+	VEC_APPEND(intptr, &vec_intptr, ((intptr[]){&value, &value, &value}), 3);
+
 	/* Don't forget to delete the vectors. */
 	VEC_DEL(int, &vec_int);
 	VEC_DEL(float, &vec_float);

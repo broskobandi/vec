@@ -118,6 +118,12 @@ SOFTWARE.
  * \return The number of elements stored in vec. */
 #define VEC_LEN(T, vec) vec_##T##_len((vec))
 
+/** Appends an array at the end of the vector.
+ * \param T The type of the array (must be the same as the vector)
+ * \param vec A pointer to the vector to be modified. 
+ * \param array The array to be appeneded at the end of the vector.
+ * \param len The length of the array to be appended.
+ * \return 0 on success or 1 on failure. */
 #define VEC_APPEND(T, vec, array, len) vec_##T##_append((vec), (array), (len))
 
 /*****************************************************************************
@@ -168,6 +174,12 @@ int vec_generic_remove(vec_t **vec, size_t index, size_t sizeof_type);
  * \return The length of the vector.*/
 size_t vec_generic_len(const vec_t *vec);
 
+/** Appends an array at the end of the vector.
+ * \param vec A pointer to the vector to be modified. 
+ * \param arr The array to be appeneded at the end of the vector.
+ * \param len The length of the array to be appended.
+ * \param sizeof_type The size of the array type (must be the same as the vec type).
+ * \return 0 on success or 1 on failure. */
 int vec_generic_append(vec_t **vec, const void *arr, size_t len, size_t sizeof_type);
 
 #endif

@@ -106,8 +106,15 @@ size_t vec_generic_len(const vec_t *vec) {
 	return vec->len;
 }
 
-// int vec_generic_append(vec_t **vec, const void *arr, size_t len, size_t sizeof_type) {
-// 	if (!vec || !*vec || !arr) RET_ERR("Invalid argument.", 1);
-// 	if ((*vec)->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
-// 	RET_OK(0);
-// }
+/** Appends an array at the end of the vector.
+ * \param vec A pointer to the vector to be modified. 
+ * \param arr The array to be appeneded at the end of the vector.
+ * \param len The length of the array to be appended.
+ * \param sizeof_type The size of the array type (must be the same as the vec type).
+ * \return 0 on success or 1 on failure. */
+int vec_generic_append(vec_t **vec, const void *arr, size_t len, size_t sizeof_type) {
+	if (!vec || !*vec || !arr) RET_ERR("Invalid argument.", 1);
+	if ((*vec)->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
+	if (vec_append(vec, arr, len)) RET_ERR("vec_append() failed.", 1);
+	RET_OK(0);
+}
