@@ -28,6 +28,14 @@ make clean &&
 make test
 ```
 
+## Documentation
+This requires doxygen to be installed on your system.
+```bash
+cd vec &&
+make doc
+```
+Open generated doc/html/index.html with your web browser.
+
 ## Usage
 For detailed usage instructions, please refer to example.c
 Add the following compile flags when compiling:
