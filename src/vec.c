@@ -6,23 +6,27 @@ void *vec_generic_new(size_t size) {
 }
 
 void vec_generic_del(void **vec) {
-	if (!vec) RET_ERR("vec cannot be NULL.");
-	vec_t *v = (vec_t*)vec;
-	if (v->magic != MAGIC) RET_ERR("Invalid pointer.");
+	if (!vec || !*vec) RET_ERR("vec cannot be NULL.");
+	vec_t **v = (vec_t**)vec;
+	if ((*v)->magic != MAGIC) RET_ERR("Invalid pointer.");
 	vec_del(v);
 }
 
 void vec_generic_push(void **vec, const void *value) {
-	if (!vec || !value) RET_ERR("Invalid argument.");
+	if (!vec || !*vec || !value) RET_ERR("Invalid argument.");
 	vec_t **v = (vec_t**)vec;
 	if ((*v)->magic != MAGIC) RET_ERR("Invalid pointer.");
 	vec_push(v, value);
 }
 
-// int vec_generic_pop(void *vec, void *value) {
-// 	if (!vec || !value) ERR("Invalid argument.");
-//
-// }
+int vec_generic_pop(void **vec, void *value) {
+	if (!vec || !*vec || !value) RET_ERR("Invalid argument.", 1);
+	vec_t **v = (vec_t**)vec;
+	if ((*v)->magic != MAGIC) RET_ERR("Invalid pointer.", 1);
+	if (!(*v)->len) RET_ERR("Empty vector cannot be popped.", 1);
+
+	RET_OK(0);
+}
 
 // int vec_generic_at(const void *vec, size_t index, void *value);
 // void vec_generic_remove(void *vec, size_t index);

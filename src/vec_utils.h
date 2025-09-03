@@ -57,8 +57,9 @@ static inline vec_t *vec_new(size_t size) {
 
 /** Frees all data associated with 'vec'.
  * \param vec The vector to be freed. */
-static inline void vec_del(vec_t *vec) {
-	free(vec);
+static inline void vec_del(vec_t **vec) {
+	free(*vec);
+	*vec = NULL;
 }
 
 /** Appends new data at the end of 'vec'.
@@ -76,6 +77,26 @@ static inline void vec_push(vec_t **vec, const void *value) {
 	unsigned char *chardata = (unsigned char*)(*vec)->data;
 	memcpy(&chardata[(*vec)->len * (*vec)->size], value, (*vec)->size);
 	(*vec)->len++;
+}
+
+/** Removes the last element of 'vec' and copies its value into the varible 
+ * 'value' is pointing to.
+ * \param vec A pointer to the vec object to be modified. 
+ * \param value A pointer to the variable the data is to be copied into.
+ * \return 0 on success and 1 on failure. */
+static inline int vec_pop(vec_t **vec, void *value) {
+	unsigned char *chardata = (unsigned char*)(*vec)->data;
+	memcpy(value, &chardata[((*vec)->len - 1) * (*vec)->size], (*vec)->size);
+	if ((*vec)->len - 1 <= (*vec)->capacity / 2 && (*vec)->capacity / 2 >= DEFAULT_CAPACITY) {
+		size_t new_capacity = (*vec)->capacity / 2;
+		vec_t *tmp = realloc(*vec, ROUNDUP(sizeof(vec_t)) + new_capacity * (*vec)->size);
+		if (!tmp) RET_ERR("Failed to realloc memory.", 1);
+		*vec = tmp;
+		(*vec)->capacity = new_capacity;
+		SET_DATA_PTR(*vec);
+	}
+	(*vec)->len--;
+	RET_OK(0);
 }
 
 #endif
