@@ -65,6 +65,9 @@ SOFTWARE.
 	}\
 	static inline size_t vec_##T##_len(const vec_##T##_t *vec) {\
 		return vec_generic_len((vec_t*)vec);\
+	}\
+	static inline int vec_##T##_append(vec_##T##_t **vec, const T *array, size_t len) {\
+		return vec_generic_append((vec_t**)vec, (void*)array, len, sizeof(T));\
 	}
 
 /** Convenient type alias for the generated vectors. */
@@ -115,6 +118,8 @@ SOFTWARE.
  * \return The number of elements stored in vec. */
 #define VEC_LEN(T, vec) vec_##T##_len((vec))
 
+#define VEC_APPEND(T, vec, array, len) vec_##T##_append((vec), (array), (len))
+
 /*****************************************************************************
  * Generic api
  *****************************************************************************/
@@ -162,5 +167,7 @@ int vec_generic_remove(vec_t **vec, size_t index, size_t sizeof_type);
  * \param vec The vector object to access.
  * \return The length of the vector.*/
 size_t vec_generic_len(const vec_t *vec);
+
+int vec_generic_append(vec_t **vec, const void *arr, size_t len, size_t sizeof_type);
 
 #endif

@@ -70,7 +70,7 @@ struct vec {
  * \return Returns a new instance of vec or NULL on failure. */
 static inline vec_t *vec_new(size_t size) {
 	size_t alloc_size = ROUNDUP(sizeof(vec_t)) + size * DEFAULT_CAPACITY;
-	vec_t *vec = malloc(alloc_size);
+	vec_t *vec = (vec_t*)malloc(alloc_size);
 	if (!vec) RET_ERR("malloc() failed.", NULL);
 	vec->size = size;
 	vec->capacity = DEFAULT_CAPACITY;
@@ -86,17 +86,27 @@ static inline void vec_del(vec_t **vec) {
 	*vec = NULL;
 }
 
+static inline int resize(vec_t **vec, size_t new_capacity) {
+	vec_t *tmp = realloc((*vec), new_capacity * (*vec)->size + ROUNDUP(sizeof(vec_t)));
+	if (!tmp) RET_ERR("realloc() failed.", 1);
+	(*vec)->capacity = new_capacity;
+	SET_DATA_PTR(*vec);
+	return 0;
+}
+
 /** Appends new data at the end of 'vec'.
  * \param vec The vector to extend.
  * \param value A pointer to a variable holding the value to be pushed to the end of vec. */
 static inline int vec_push(vec_t **vec, const void *value) {
 	if ((*vec)->len + 1 > (*vec)->capacity) {
-		size_t new_capacity = (*vec)->capacity * 2;
-		vec_t *tmp = realloc(*vec, new_capacity * (*vec)->size + ROUNDUP(sizeof(vec_t)));
-		if (!tmp) RET_ERR("Failed to realloc memory.", 1);
-		*vec = tmp;
-		(*vec)->capacity = new_capacity;
-		SET_DATA_PTR(*vec);
+		// size_t new_capacity = (*vec)->capacity * 2;
+		// vec_t *tmp = realloc(*vec, new_capacity * (*vec)->size + ROUNDUP(sizeof(vec_t)));
+		// if (!tmp) RET_ERR("Failed to realloc memory.", 1);
+		// *vec = tmp;
+		// (*vec)->capacity = new_capacity;
+		// SET_DATA_PTR(*vec);
+		if (resize(vec, (*vec)->capacity * 2))
+			RET_ERR("Failed to resize vector", 1);
 	}
 	unsigned char *chardata = (unsigned char*)(*vec)->data;
 	memcpy(&chardata[(*vec)->len * (*vec)->size], value, (*vec)->size);
@@ -113,12 +123,14 @@ static inline int vec_pop(vec_t **vec, void *value) {
 	unsigned char *chardata = (unsigned char*)(*vec)->data;
 	memcpy(value, &chardata[((*vec)->len - 1) * (*vec)->size], (*vec)->size);
 	if ((*vec)->len - 1 <= (*vec)->capacity / 2 && (*vec)->capacity / 2 >= DEFAULT_CAPACITY) {
-		size_t new_capacity = (*vec)->capacity / 2;
-		vec_t *tmp = realloc(*vec, ROUNDUP(sizeof(vec_t)) + new_capacity * (*vec)->size);
-		if (!tmp) RET_ERR("Failed to realloc memory.", 1);
-		*vec = tmp;
-		(*vec)->capacity = new_capacity;
-		SET_DATA_PTR(*vec);
+		// size_t new_capacity = (*vec)->capacity / 2;
+		// vec_t *tmp = realloc(*vec, ROUNDUP(sizeof(vec_t)) + new_capacity * (*vec)->size);
+		// if (!tmp) RET_ERR("Failed to realloc memory.", 1);
+		// *vec = tmp;
+		// (*vec)->capacity = new_capacity;
+		// SET_DATA_PTR(*vec);
+		if (resize(vec, (*vec)->capacity / 2))
+			RET_ERR("Failed to resize vector.", 1);
 	}
 	(*vec)->len--;
 	RET_OK(0);
@@ -143,12 +155,14 @@ static inline int vec_remove(vec_t **vec, size_t index) {
 	size_t src_index = dst_index + (*vec)->size;
 	memmove(&chardata[dst_index], &chardata[src_index], len_to_copy * (*vec)->size);
 	if ((*vec)->len - 1 <= (*vec)->capacity / 2 && (*vec)->capacity / 2 >= DEFAULT_CAPACITY) {
-		size_t new_capacity = (*vec)->capacity / 2;
-		vec_t *tmp = realloc(*vec, ROUNDUP(sizeof(vec_t)) + new_capacity * (*vec)->size);
-		if (!tmp) RET_ERR("Failed to realloc memory.", 1);
-		*vec = tmp;
-		(*vec)->capacity = new_capacity;
-		SET_DATA_PTR(*vec);
+		// size_t new_capacity = (*vec)->capacity / 2;
+		// vec_t *tmp = realloc(*vec, ROUNDUP(sizeof(vec_t)) + new_capacity * (*vec)->size);
+		// if (!tmp) RET_ERR("Failed to realloc memory.", 1);
+		// *vec = tmp;
+		// (*vec)->capacity = new_capacity;
+		// SET_DATA_PTR(*vec);
+		if (resize(vec, (*vec)->capacity / 2))
+			RET_ERR("Failed to resize vec.", 1);
 	}
 	(*vec)->len--;
 	RET_OK(0);

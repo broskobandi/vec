@@ -105,3 +105,9 @@ size_t vec_generic_len(const vec_t *vec) {
 	if (!vec) RET_ERR("'vec' cannot be NULL.", (size_t)-1);
 	return vec->len;
 }
+
+// int vec_generic_append(vec_t **vec, const void *arr, size_t len, size_t sizeof_type) {
+// 	if (!vec || !*vec || !arr) RET_ERR("Invalid argument.", 1);
+// 	if ((*vec)->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
+// 	RET_OK(0);
+// }
