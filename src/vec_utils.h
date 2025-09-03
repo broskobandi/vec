@@ -53,7 +53,7 @@ do {\
 	(void*)((unsigned char*)(vec) + ROUNDUP(sizeof(vec_t)));\
 } while(0)
 
-/** Generic vector object to represent vecs of all types. */
+/** Generic vector object that represents vecs of all types internally. */
 struct vec {
 	/** Pointer to the start of the data. */
 	void *data;

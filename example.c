@@ -51,16 +51,24 @@ int main(void) {
 	VEC_PUSH(intptr, &vec_intptr, &value);
 
 	/* Pop the last element off the vectors and return them. */
-	printf("Last integer: %d\n", VEC_POP(int, &vec_int));
-	printf("Last float: %f\n", VEC_POP(float, &vec_float));
-	printf("Last obj.i: %d\n", VEC_POP(obj_t, &vec_obj).i);
-	printf("Last ptr: %p\n", VEC_POP(intptr, &vec_intptr));
+	int last_int = 0;
+	VEC_POP(int, &vec_int, &last_int);
+	float last_float = 0;
+	VEC_POP(float, &vec_float, &last_float);
+	obj_t last_obj = {0};
+	VEC_POP(obj_t, &vec_obj, &last_obj);
+	int *last_ptr = NULL;
+	VEC_POP(intptr, &vec_intptr, &last_ptr);
 
 	/* Return a copy of an element. */
-	printf("Second integer: %d\n", VEC_AT(int, vec_int, 1));
-	printf("Second float: %f\n", VEC_AT(float, vec_float, 1));
-	printf("Second obj.i: %d\n", VEC_AT(obj_t, vec_obj, 1).i);
-	printf("Second ptr: %p\n", VEC_AT(intptr, vec_intptr, 1));
+	int second_int = 0;
+	VEC_AT(int, vec_int, 1, &second_int);
+	float second_float = 0;
+	VEC_AT(float, vec_float, 1, &second_float);
+	obj_t second_obj = {0};
+	VEC_AT(obj_t, vec_obj, 1, &second_obj);
+	int *second_ptr = NULL;
+	VEC_AT(intptr, vec_intptr, 1, &second_ptr);
 
 	/* Remove an element */
 	VEC_REMOVE(int, &vec_int, 1);

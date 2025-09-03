@@ -34,41 +34,9 @@ SOFTWARE.
 
 #include <stddef.h>
 
-/** Convenient type alias for the generated vectors. */
-#define VEC(T) vec_##T##_t
-
-/** Creates a new vector of type 'T'.
- * \param T The type of vector to create.
- * \return A pointer to the vector object or NULL on failure. */
-#define VEC_NEW(T) vec_##T##_new()
-
-/** Deletes vector of type 'T'.
- * \param T The type of vector to create.
- * \param vec The vector to be deleted. */
-#define VEC_DEL(T, vec) vec_##T##_del((vec))
-
-/** Appends 'value' at the end of 'vec'
- * \param T The type of the vector.
- * \param vec The vector to be modified.
- * \param value The value to be appended.
- * \return Returns 0 on success or 1 on failure. */
-#define VEC_PUSH(T, vec, value) vec_##T##_push((vec), (value))
-
-/** Removes and returns the last element of 'vec'
- * \param T The type of the vector.
- * \param vec The vector to be modified.
- * \return Returns the value of the last element on success
- * or (T){0} on failure.  */
-#define VEC_POP(T, vec, value) vec_##T##_pop((vec))
-
-/** Removes and returns the last element of 'vec'
- * \param T The type of the vector.
- * \param vec The vector to be modified.
- * \return Returns the value of the last element on success
- * or (T){0} on failure. */
-#define VEC_AT(T, vec, index)  vec_##T##_at((vec), (index))
-#define VEC_REMOVE(T, vec, index) vec_##T##_remove((vec), (index))
-#define VEC_LEN(T, vec) vec_##T##_len((vec))
+/*****************************************************************************
+ * Type-safe api
+ *****************************************************************************/
 
 /** Defines an opaque vector handle for the desired type and creates type-safe 
  * static inline function wrappers around the generic vector functions.
@@ -98,6 +66,58 @@ SOFTWARE.
 	static inline size_t vec_##T##_len(const vec_##T##_t *vec) {\
 		return vec_generic_len((vec_t*)vec);\
 	}
+
+/** Convenient type alias for the generated vectors. */
+#define VEC(T) vec_##T##_t
+
+/** Creates a new vector of type 'T'.
+ * \param T The type of vector to create.
+ * \return A pointer to the vector object or NULL on failure. */
+#define VEC_NEW(T) vec_##T##_new()
+
+/** Deletes vector of type 'T'.
+ * \param T The type of vector to create.
+ * \param vec The vector to be deleted. */
+#define VEC_DEL(T, vec) vec_##T##_del((vec))
+
+/** Appends 'value' at the end of 'vec'
+ * \param T The type of the vector.
+ * \param vec The vector to be modified.
+ * \param value The value to be appended.
+ * \return Returns 0 on success or 1 on failure. */
+#define VEC_PUSH(T, vec, value) vec_##T##_push((vec), (value))
+
+/** Removes and copies the last element of 'vec' into 'value'.
+ * \param T The type of the vector.
+ * \param vec The vector to be modified.
+ * \param value A pointer to the variable to copy data into.
+ * \return 0 on success or 1 on failure.  */
+#define VEC_POP(T, vec, value) vec_##T##_pop((vec), (value))
+
+/** Copies the value of the element at 'index' into 'value'.
+ * \param T The type of the vector.
+ * \param vec The vector to be modified.
+ * \param index The index to access.
+ * \param value A pointer to the variable to copy data into.
+ * \return 0 on success or 1 on failure. */
+#define VEC_AT(T, vec, index, value)  vec_##T##_at((vec), (index), (value))
+
+/** Removes the 'index'-th element.
+ * \param T The type of the vector.
+ * \param vec The vector to be modified.
+ * \param index The index to remove.
+ * \return 0 on success or 1 on failure. */
+#define VEC_REMOVE(T, vec, index) vec_##T##_remove((vec), (index))
+
+/** Returns the number of elements stored in 'vec'.
+ * \param T The type of the vector.
+ * \param vec The vector to access. 
+ * \return The number of elements stored in vec. */
+#define VEC_LEN(T, vec) vec_##T##_len((vec))
+
+/*****************************************************************************
+ * Generic api
+ *****************************************************************************/
 
 /** Opaque handle for the generic vector type. */
 typedef struct vec vec_t;
