@@ -48,8 +48,8 @@ SOFTWARE.
 	static inline vec_##T##_t *vec_##T##_new() {\
 		return (vec_##T##_t*)vec_generic_new(sizeof(T));\
 	}\
-	static inline void vec_##T##_del(vec_##T##_t **vec) {\
-		vec_generic_del((vec_t**)vec, sizeof(T));\
+	static inline int vec_##T##_del(vec_##T##_t **vec) {\
+		return vec_generic_del((vec_t**)vec, sizeof(T));\
 	}\
 	static inline int vec_##T##_push(vec_##T##_t **vec, T value) {\
 		return vec_generic_push((vec_t**)vec, &value, sizeof(T));\
@@ -80,7 +80,8 @@ SOFTWARE.
 
 /** Deletes vector of type 'T'.
  * \param T The type of vector to create.
- * \param vec The vector to be deleted. */
+ * \param vec The vector to be deleted.
+ * \return 0 on success or 1 on failure. */
 #define VEC_DEL(T, vec) vec_##T##_del((vec))
 
 /** Appends 'value' at the end of 'vec'
