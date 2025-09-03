@@ -1,13 +1,71 @@
+/*
+MIT License
+
+Copyright (c) 2025 broskobandi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/**
+ * \file include/vec.h
+ * \brief Public header for the vec library.
+ * \details This file contains macro and static inline function wrappers 
+ * and forward declarations for the vec library.
+ * */
+
 #ifndef VEC_H
 #define VEC_H
 
 #include <stddef.h>
 
+/** Convenient type alias for the generated vectors. */
 #define VEC(T) vec_##T##_t
+
+/** Creates a new vector of type 'T'.
+ * \param T The type of vector to create.
+ * \return A pointer to the vector object or NULL on failure. */
 #define VEC_NEW(T) vec_##T##_new()
+
+/** Deletes vector of type 'T'.
+ * \param T The type of vector to create.
+ * \param vec The vector to be deleted. */
 #define VEC_DEL(T, vec) vec_##T##_del((vec))
+
+/** Appends 'value' at the end of 'vec'
+ * \param T The type of the vector.
+ * \param vec The vector to be modified.
+ * \param value The value to be appended.
+ * \return Returns 0 on success or 1 on failure. */
 #define VEC_PUSH(T, vec, value) vec_##T##_push((vec), (value))
-#define VEC_POP(T, vec) vec_##T##_pop((vec))
+
+/** Removes and returns the last element of 'vec'
+ * \param T The type of the vector.
+ * \param vec The vector to be modified.
+ * \return Returns the value of the last element on success
+ * or (T){0} on failure.  */
+#define VEC_POP(T, vec, value) vec_##T##_pop((vec))
+
+/** Removes and returns the last element of 'vec'
+ * \param T The type of the vector.
+ * \param vec The vector to be modified.
+ * \return Returns the value of the last element on success
+ * or (T){0} on failure. */
 #define VEC_AT(T, vec, index)  vec_##T##_at((vec), (index))
 #define VEC_REMOVE(T, vec, index) vec_##T##_remove((vec), (index))
 #define VEC_LEN(T, vec) vec_##T##_len((vec))
@@ -28,21 +86,11 @@
 	static inline int vec_##T##_push(vec_##T##_t **vec, T value) {\
 		return vec_generic_push((vec_t**)vec, &value, sizeof(T));\
 	}\
-	static inline T vec_##T##_pop(vec_##T##_t **vec) {\
-		T value;\
-		if (vec_generic_pop((vec_t**)vec, &value, sizeof(T))) {\
-			T empty = {0};\
-			return empty;\
-		}\
-		return value;\
+	static inline int vec_##T##_pop(vec_##T##_t **vec, T *value) {\
+		return vec_generic_pop((vec_t**)vec, value, sizeof(T));\
 	}\
-	static inline T vec_##T##_at(const vec_##T##_t *vec, size_t index) {\
-		T value;\
-		if (vec_generic_at((vec_t*)vec, index, &value, sizeof(T))) {\
-			T empty = {0};\
-			return empty;\
-		}\
-		return value;\
+	static inline int vec_##T##_at(const vec_##T##_t *vec, size_t index, T *value) {\
+		return vec_generic_at((vec_t*)vec, index, value, sizeof(T));\
 	}\
 	static inline int vec_##T##_remove(vec_##T##_t **vec, size_t index) {\
 		return vec_generic_remove((vec_t**)vec, index, sizeof(T));\

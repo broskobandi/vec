@@ -317,15 +317,15 @@ void test_vec_obj_pop() {
 		vec_obj_t_t *vec = vec_obj_t_new();
 		obj_t in = {.f = 2.3f, .x = 5, .str = "src"};
 		ASSERT(!vec_obj_t_push(&vec, in));
-		obj_t out = vec_obj_t_pop(&vec);
+		obj_t out = {0};
+		ASSERT(!vec_obj_t_pop(&vec, &out));
 		ASSERT(!memcmp(&in, &out, sizeof(obj_t)));
 		vec_obj_t_del(&vec);
 	}
 	{ // Empty vec
-		obj_t empty = {0};
 		vec_obj_t_t *vec = vec_obj_t_new();
-		obj_t out = vec_obj_t_pop(&vec);
-		ASSERT(!memcmp(&empty, &out, sizeof(obj_t)));
+		obj_t out = {0};
+		ASSERT(vec_obj_t_pop(&vec, &out));
 		vec_obj_t_del(&vec);
 	}
 }
@@ -334,12 +334,15 @@ void test_vec_int_pop() {
 	{ // Normal case
 		vec_int_t *vec = vec_int_new();
 		vec_int_push(&vec, 5);
-		ASSERT(vec_int_pop(&vec) == 5);
+		int out = 0;
+		ASSERT(!vec_int_pop(&vec, &out));
+		ASSERT(out == 5);
 		vec_int_del(&vec);
 	}
 	{ // empty vec
 		vec_int_t *vec = vec_int_new();
-		ASSERT(vec_int_pop(&vec) == 0);
+		int out = 0;
+		ASSERT(vec_int_pop(&vec, &out));
 		vec_int_del(&vec);
 	}
 }
@@ -349,15 +352,15 @@ void test_vec_obj_at() {
 		vec_obj_t_t *vec = vec_obj_t_new();
 		obj_t in = {.f = 2.3f, .x = 5, .str = "src"};
 		ASSERT(!vec_obj_t_push(&vec, in));
-		obj_t out = vec_obj_t_at(vec, 0);
+		obj_t out = {0};
+		ASSERT(!vec_obj_t_at(vec, 0, &out));
 		ASSERT(!memcmp(&in, &out, sizeof(obj_t)));
 		vec_obj_t_del(&vec);
 	}
 	{ // Empty vec
-		obj_t empty = {0};
 		vec_obj_t_t *vec = vec_obj_t_new();
-		obj_t out = vec_obj_t_at(vec, 0);
-		ASSERT(!memcmp(&empty, &out, sizeof(obj_t)));
+		obj_t out = {0};
+		ASSERT(vec_obj_t_at(vec, 0, &out));
 		vec_obj_t_del(&vec);
 	}
 }
@@ -366,12 +369,15 @@ void test_vec_int_at() {
 	{ // Normal case
 		vec_int_t *vec = vec_int_new();
 		vec_int_push(&vec, 5);
-		ASSERT(vec_int_at(vec, 0) == 5);
+		int out = 0;
+		ASSERT(!vec_int_at(vec, 0, &out));
+		ASSERT(out == 5);
 		vec_int_del(&vec);
 	}
 	{ // empty vec
 		vec_int_t *vec = vec_int_new();
-		ASSERT(vec_int_at(vec, 0) == 0);
+		int out = 0;
+		ASSERT(vec_int_at(vec, 0, &out));
 		vec_int_del(&vec);
 	}
 }
