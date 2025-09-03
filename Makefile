@@ -53,6 +53,9 @@ uninstall:
 	rm $(addprefix $(LIB_INSTALL_DIR)/, $(notdir $(LIB_SO)))
 	rm $(addprefix $(INC_INSTALL_DIR)/, $(notdir $(INC)))
 
+doc:
+	doxygen
+
 $(LIB_A): $(OBJ) | $(BUILD_DIR)
 	ar rcs $@ $<
 
