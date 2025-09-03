@@ -171,6 +171,7 @@ void test_vec_generic_push() {
 		ASSERT(vec_generic_push(&vec, &value, sizeof(int)));
 		vec = vec_generic_new(sizeof(int));
 		ASSERT(vec_generic_push(&vec, NULL, sizeof(int)));
+		vec_del(&vec);
 	}
 	{ // Invalid pointer
 		vec_t *vec = vec_generic_new(sizeof(char));
@@ -220,22 +221,26 @@ void test_vec_generic_at() {
 		ASSERT(!vec_generic_push(&vec, &in, sizeof(int)));
 		int out = 0;
 		ASSERT(!vec_generic_at(vec, 0, &out, sizeof(int)));
+		vec_del(&vec);
 	}
 	{ // Invalid argument
 		vec_t *vec = vec_generic_new(sizeof(int));
 		int value = 0;
 		ASSERT(vec_generic_at(NULL, 0, &value, sizeof(int)));
 		ASSERT(vec_generic_at(vec, 0, NULL, sizeof(int)));
+		vec_del(&vec);
 	}
 	{ // Invalid ptr
 		vec_t *vec = vec_generic_new(sizeof(char));
 		int value = 0;
 		ASSERT(vec_generic_at(vec, 0, &value, sizeof(int)));
+		vec_del(&vec);
 	}
 	{ // Out of bounds
 		vec_t *vec = vec_generic_new(sizeof(int));
 		int value = 0;
 		ASSERT(vec_generic_at(vec, 1, &value, sizeof(int)));
+		vec_del(&vec);
 	}
 }
 
@@ -248,6 +253,7 @@ void test_vec_generic_remove() {
 		ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
 		ASSERT(!vec_generic_remove(&vec, 1, sizeof(int)));
 		ASSERT(vec->len == 2);
+		vec_del(&vec);
 	}
 	{ // Invalid argument
 		vec_t *vec = NULL;
@@ -257,16 +263,19 @@ void test_vec_generic_remove() {
 	{ // Invalid pointer
 		vec_t *vec = vec_generic_new(sizeof(char));
 		ASSERT(vec_generic_remove(&vec, 0, sizeof(int)));
+		vec_del(&vec);
 	}
 	{ // Out of bounds
 		vec_t *vec = vec_generic_new(sizeof(int));
 		int value = 5;
 		ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
 		ASSERT(vec_generic_remove(&vec, 1, sizeof(int)));
+		vec_del(&vec);
 	}
 	{ // Empty vec
 		vec_t *vec = vec_generic_new(sizeof(int));
 		ASSERT(vec_generic_remove(&vec, 0, sizeof(int)));
+		vec_del(&vec);
 	}
 }
 
@@ -277,25 +286,116 @@ void test_vec_generic_remove() {
 TYPEDEF_VEC(int);
 
 void test_vec_int_new() {
-
+	vec_int_t *vec = vec_int_new();
+	ASSERT(vec);
+	vec_int_del(&vec);
 }
 
 void test_vec_int_del() {
-
+	vec_int_t *vec = vec_int_new();
+	vec_int_del(&vec);
+	ASSERT(!vec);
+	vec_int_del(&vec);
 }
 
 void test_vec_int_push() {
+	vec_int_t *vec = vec_int_new();
+	ASSERT(!vec_int_push(&vec, 5));
+	vec_int_del(&vec);
+}
 
+typedef struct obj {
+	const char *str;
+	float f;
+	int x;
+} obj_t;
+
+TYPEDEF_VEC(obj_t);
+
+void test_vec_obj_pop() {
+	{ // Normal case
+		vec_obj_t_t *vec = vec_obj_t_new();
+		obj_t in = {.f = 2.3f, .x = 5, .str = "src"};
+		ASSERT(!vec_obj_t_push(&vec, in));
+		obj_t out = vec_obj_t_pop(&vec);
+		ASSERT(!memcmp(&in, &out, sizeof(obj_t)));
+		vec_obj_t_del(&vec);
+	}
+	{ // Empty vec
+		obj_t empty = {0};
+		vec_obj_t_t *vec = vec_obj_t_new();
+		obj_t out = vec_obj_t_pop(&vec);
+		ASSERT(!memcmp(&empty, &out, sizeof(obj_t)));
+		vec_obj_t_del(&vec);
+	}
 }
 
 void test_vec_int_pop() {
+	{ // Normal case
+		vec_int_t *vec = vec_int_new();
+		vec_int_push(&vec, 5);
+		ASSERT(vec_int_pop(&vec) == 5);
+		vec_int_del(&vec);
+	}
+	{ // empty vec
+		vec_int_t *vec = vec_int_new();
+		ASSERT(vec_int_pop(&vec) == 0);
+		vec_int_del(&vec);
+	}
+}
 
+void test_vec_obj_at() {
+	{ // Normal case
+		vec_obj_t_t *vec = vec_obj_t_new();
+		obj_t in = {.f = 2.3f, .x = 5, .str = "src"};
+		ASSERT(!vec_obj_t_push(&vec, in));
+		obj_t out = vec_obj_t_at(vec, 0);
+		ASSERT(!memcmp(&in, &out, sizeof(obj_t)));
+		vec_obj_t_del(&vec);
+	}
+	{ // Empty vec
+		obj_t empty = {0};
+		vec_obj_t_t *vec = vec_obj_t_new();
+		obj_t out = vec_obj_t_at(vec, 0);
+		ASSERT(!memcmp(&empty, &out, sizeof(obj_t)));
+		vec_obj_t_del(&vec);
+	}
 }
 
 void test_vec_int_at() {
-
+	{ // Normal case
+		vec_int_t *vec = vec_int_new();
+		vec_int_push(&vec, 5);
+		ASSERT(vec_int_at(vec, 0) == 5);
+		vec_int_del(&vec);
+	}
+	{ // empty vec
+		vec_int_t *vec = vec_int_new();
+		ASSERT(vec_int_at(vec, 0) == 0);
+		vec_int_del(&vec);
+	}
 }
 
 void test_vec_int_remove() {
+	{ // Normal case
+		vec_int_t *vec = vec_int_new();
+		vec_int_push(&vec, 5);
+		ASSERT(!vec_int_remove(&vec, 0));
+		vec_int_del(&vec);
+	}
+	{ // out of bounds
+		vec_int_t *vec = vec_int_new();
+		ASSERT(vec_int_remove(&vec, 0));
+		vec_int_del(&vec);
+	}
+}
 
+void test_vec_int_len() {
+	{ // Normal case
+		vec_int_t *vec = vec_int_new();
+		vec_int_push(&vec, 1);
+		vec_int_push(&vec, 2);
+		vec_int_push(&vec, 3);
+		ASSERT(vec_int_len(vec) == 3);
+	}
 }

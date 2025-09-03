@@ -32,8 +32,11 @@ void test_vec_generic_remove();
 void test_vec_int_new();
 void test_vec_int_del();
 void test_vec_int_push();
+void test_vec_obj_pop();
 void test_vec_int_pop();
+void test_vec_obj_at();
 void test_vec_int_at();
 void test_vec_int_remove();
+void test_vec_int_len();
 
 #endif

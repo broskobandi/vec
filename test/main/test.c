@@ -32,9 +32,12 @@ int main(void) {
 	test_vec_int_new();
 	test_vec_int_del();
 	test_vec_int_push();
+	test_vec_obj_pop();
 	test_vec_int_pop();
+	test_vec_obj_at();
 	test_vec_int_at();
 	test_vec_int_remove();
+	test_vec_int_len();
 
 	test_print_results();
 

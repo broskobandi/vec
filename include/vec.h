@@ -3,6 +3,15 @@
 
 #include <stddef.h>
 
+#define VEC(T) vec_##T##_t
+#define VEC_NEW(T) vec_##T##_new()
+#define VEC_DEL(T, vec) vec_##T##_del((vec))
+#define VEC_PUSH(T, vec, value) vec_##T##_push((vec), (value))
+#define VEC_POP(T, vec) vec_##T##_pop((vec))
+#define VEC_AT(T, vec, index)  vec_##T##_at((vec), (index))
+#define VEC_REMOVE(T, vec, index) vec_##T##_remove((vec), (index))
+#define VEC_LEN(T, vec) vec_##T##_len((vec))
+
 /** Defines an opaque vector handle for the desired type and creates type-safe 
  * static inline function wrappers around the generic vector functions.
  * Please refer to the documentation of vec_generic* functions for details 
@@ -16,23 +25,30 @@
 	static inline void vec_##T##_del(vec_##T##_t **vec) {\
 		vec_generic_del((vec_t**)vec, sizeof(T));\
 	}\
-	static inline void vec_##T##_push(vec_##T##_t **vec, T value) {\
-		vec_generic_push((vec_t**)vec, &value, sizeof(T));\
+	static inline int vec_##T##_push(vec_##T##_t **vec, T value) {\
+		return vec_generic_push((vec_t**)vec, &value, sizeof(T));\
 	}\
 	static inline T vec_##T##_pop(vec_##T##_t **vec) {\
 		T value;\
-		if (vec_generic_pop((vec_t**)vec, &value, sizeof(T)))\
-			return (T){0};\
+		if (vec_generic_pop((vec_t**)vec, &value, sizeof(T))) {\
+			T empty = {0};\
+			return empty;\
+		}\
 		return value;\
 	}\
 	static inline T vec_##T##_at(const vec_##T##_t *vec, size_t index) {\
 		T value;\
-		if (vec_generic_at((vec_t*)vec, index, &value, sizeof(T)))\
-			return (T){0};\
+		if (vec_generic_at((vec_t*)vec, index, &value, sizeof(T))) {\
+			T empty = {0};\
+			return empty;\
+		}\
 		return value;\
 	}\
-	static inline void vec_##T##_remove(vec_##T##_t **vec, size_t index) {\
-		vec_generic_remove((vec_t**)vec, index, sizeof(T));\
+	static inline int vec_##T##_remove(vec_##T##_t **vec, size_t index) {\
+		return vec_generic_remove((vec_t**)vec, index, sizeof(T));\
+	}\
+	static inline size_t vec_##T##_len(const vec_##T##_t *vec) {\
+		return vec_generic_len((vec_t*)vec);\
 	}
 
 /** Opaque handle for the generic vector type. */
@@ -73,5 +89,10 @@ int vec_generic_at(const vec_t *vec, size_t index, void *value, size_t sizeof_ty
  * \param index The index of the lement to be removed.
  * \return 0 on success or 1 on failure. */
 int vec_generic_remove(vec_t **vec, size_t index, size_t sizeof_type);
+
+/** Return the length of the vector.
+ * \param vec The vector object to access.
+ * \return The length of the vector.*/
+size_t vec_generic_len(const vec_t *vec);
 
 #endif

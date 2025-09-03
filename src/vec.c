@@ -43,3 +43,8 @@ int vec_generic_remove(vec_t **vec, size_t index, size_t sizeof_type) {
 	if (vec_remove(vec, index)) RET_ERR("vec_remove() failed.", 1);
 	RET_OK(0);
 }
+
+size_t vec_generic_len(const vec_t *vec) {
+	if (!vec) RET_ERR("'vec' cannot be NULL.", (size_t)-1);
+	return vec->len;
+}
