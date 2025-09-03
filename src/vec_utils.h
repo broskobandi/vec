@@ -87,8 +87,9 @@ static inline void vec_del(vec_t **vec) {
 }
 
 static inline int resize(vec_t **vec, size_t new_capacity) {
-	vec_t *tmp = realloc((*vec), new_capacity * (*vec)->size + ROUNDUP(sizeof(vec_t)));
+	vec_t *tmp = realloc(*vec, new_capacity * (*vec)->size + ROUNDUP(sizeof(vec_t)));
 	if (!tmp) RET_ERR("realloc() failed.", 1);
+	*vec = tmp;
 	(*vec)->capacity = new_capacity;
 	SET_DATA_PTR(*vec);
 	return 0;

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 /* Include the header. */
 #include <vec.h>
@@ -86,7 +87,19 @@ int main(void) {
 	VEC_APPEND(int, &vec_int, ((int[]){1, 2, 3}), 3);
 	VEC_APPEND(float, &vec_float, ((float[]){1.1f, 2.2f, 3.3f}), 3);
 	VEC_APPEND(obj_t, &vec_obj, ((obj_t[]){{0}, {0}, {0}}), 3);
-	VEC_APPEND(intptr, &vec_intptr, ((intptr[]){&value, &value, &value}), 3);
+	// int *ptr1 = malloc(sizeof(int));
+	// int *ptr2 = malloc(sizeof(int));
+	// int *ptr3 = malloc(sizeof(int));
+	// int *ptrarr[] = {
+	// 	malloc(sizeof(int)),
+	// 	malloc(sizeof(int)),
+	// 	malloc(sizeof(int)),
+	// };
+	// VEC_APPEND(intptr, &vec_intptr, ((intptr[]){&value, &value, &value}), 3);
+	// VEC_APPEND(intptr, &vec_intptr, ((int*[]){NULL, NULL, NULL}), 3);
+	vec_intptr_append(&vec_intptr, (int*[]){NULL, NULL, NULL}, 3);
+	// VEC_APPEND(intptr, &vec_intptr, ((intptr[]){ptr1, ptr2, ptr3}), 3);
+	// VEC_APPEND(intptr, &vec_intptr, ptrarr, 3);
 
 	/* Don't forget to delete the vectors. */
 	VEC_DEL(int, &vec_int);

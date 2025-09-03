@@ -1,6 +1,7 @@
 #include "test_utils.h"
 #include "vec_utils.h"
 #include <error.h>
+#include <stdlib.h>
 
 /** 
  * Helper functions - private functions
@@ -122,7 +123,15 @@ void test_vec_append() {
 		ASSERT(!vec_append(&vec, str, strlen(str)));
 		ASSERT(!memcmp((char*)vec->data, str, strlen(str)));
 		ASSERT(vec->len == strlen(str));
-		ASSERT(vec->len == strlen(str));
+		vec_del(&vec);
+	}
+	{ // Normal case: pointer array
+		int *arr[] = {NULL, NULL, NULL};
+		vec_t *vec = vec_new(sizeof(int*));
+		ASSERT(vec);
+		ASSERT(!vec_append(&vec, arr, 3));
+		ASSERT(!memcmp((int*)vec->data, arr, sizeof(arr)));
+		ASSERT(vec->len == 3);
 		vec_del(&vec);
 	}
 }
@@ -299,6 +308,13 @@ void test_vec_generic_append() {
 		ASSERT(!memcmp((char*)vec->data, str, strlen(str)));
 		vec_del(&vec);
 	}
+	{ // Normal case: ptr array
+		vec_t *vec = vec_generic_new(sizeof(int*));
+		int *arr[] = {NULL, NULL, NULL};
+		ASSERT(!vec_generic_append(&vec, arr, 3, sizeof(int*)));
+		ASSERT(!memcmp((int*)vec->data, arr, sizeof(arr)));
+		vec_del(&vec);
+	}
 	{ // Invalid argument
 		vec_t *vec = NULL;
 		const char *str = "some text";
@@ -444,11 +460,20 @@ void test_vec_int_len() {
 	}
 }
 
+typedef int* intptr;
+TYPEDEF_VEC(intptr)
+
 void test_vec_int_append() {
 	{ // Normal case
 		vec_int_t *vec = vec_int_new();
 		int arr[] = {1, 2, 3, 4, 5};
 		ASSERT(!vec_int_append(&vec, arr, sizeof(arr)));
 		vec_int_del(&vec);
+	}
+	{ // Normal case: ptr array
+		vec_intptr_t *vec = vec_intptr_new();
+		int *arr[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+		ASSERT(!vec_intptr_append(&vec, arr, 7));
+		ASSERT(!vec_intptr_append(&vec, arr, 7));
 	}
 }

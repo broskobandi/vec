@@ -15,6 +15,7 @@ TEST_OBJ_DIR := $(BUILD_DIR)/test-obj
 DOC_DIR := doc
 LIB_INSTALL_DIR := /usr/local/lib
 INC_INSTALL_DIR := /usr/local/include
+EXAMPLES_DIR := examples
 
 # Files
 SRC := $(wildcard $(SRC_DIR)/*.c)
@@ -28,9 +29,11 @@ TEST_MAIN := $(TEST_DIR)/main/test.c
 LIB_A := $(BUILD_DIR)/lib$(PROJECT).a
 LIB_SO := $(BUILD_DIR)/lib$(PROJECT).so
 TEST_EXE := $(BUILD_DIR)/test
+EXAMPLE_MAIN := $(EXAMPLES_DIR)/example.c
+EXAMPLE_EXE := $(BUILD_DIR)/example
 
 # Rules
-.PHONY: all test clean install uninstall doc
+.PHONY: all test example clean install uninstall doc
 
 all: $(LIB_A) $(LIB_SO)
 
@@ -39,8 +42,11 @@ test: CPPFLAGS += -Itest
 test: $(TEST_EXE)
 	./$<
 
+example: $(EXAMPLE_EXE)
+	./$<
+
 clean:
-	rm -rf $(BUILD_DIR) $(DOC_DIR) compile_commands.json
+	rm -rf $(BUILD_DIR) $(DOC_DIR) compile_commands.json example
 
 install: $(LIB_A) $(LIB_SO)
 	cp $(LIB_A) $(LIB_INSTALL_DIR)/
@@ -70,6 +76,9 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC) $(INC_PRIV) | $(OBJ_DIR)
 
 $(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.c $(INC) $(INC_PRIV) $(TEST_INC_PRIV) | $(TEST_OBJ_DIR)
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+
+$(EXAMPLE_EXE): $(EXAMPLE_MAIN) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS) -lvec
 
 $(BUILD_DIR):
 	mkdir -p $@
