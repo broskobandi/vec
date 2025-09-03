@@ -20,7 +20,7 @@ void test_vec_push() {
 
 		size_t expected_capacity = DEFAULT_CAPACITY;
 		for (size_t i = 0; i < DEFAULT_CAPACITY * 10; i++) {
-			vec_push(&vec, &i);
+			ASSERT(!vec_push(&vec, &i));
 			if (vec->len > expected_capacity)
 				expected_capacity *= 2;
 			ASSERT(vec->capacity == expected_capacity);
@@ -37,7 +37,7 @@ void test_vec_pop() {
 		vec_t *vec = vec_new(sizeof(size_t));
 		const size_t ITER = DEFAULT_CAPACITY * 10;
 		for (size_t i = 0; i < ITER; i++) {
-			vec_push(&vec, &i);
+			ASSERT(!vec_push(&vec, &i));
 		}
 		size_t expected_capacity = vec->capacity;
 		for (size_t i = ITER; i > 0; i--) {
@@ -53,5 +53,15 @@ void test_vec_pop() {
 			}
 			ASSERT(vec->capacity == expected_capacity);
 		}
+	}
+}
+
+void test_vec_at() {
+	{ // Normal case
+		// vec_t *vec = vec_new(sizeof(int));
+		// int value1 = 1;
+		// int value2 = 2;
+		// int value3 = 3;
+		// vec_push(&vec, &value1);
 	}
 }

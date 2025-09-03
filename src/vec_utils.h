@@ -65,11 +65,11 @@ static inline void vec_del(vec_t **vec) {
 /** Appends new data at the end of 'vec'.
  * \param vec The vector to extend.
  * \param value A pointer to a variable holding the value to be pushed to the end of vec. */
-static inline void vec_push(vec_t **vec, const void *value) {
+static inline int vec_push(vec_t **vec, const void *value) {
 	if ((*vec)->len + 1 > (*vec)->capacity) {
 		size_t new_capacity = (*vec)->capacity * 2;
 		vec_t *tmp = realloc(*vec, new_capacity * (*vec)->size + ROUNDUP(sizeof(vec_t)));
-		if (!tmp) RET_ERR("Failed to realloc memory.");
+		if (!tmp) RET_ERR("Failed to realloc memory.", 1);
 		*vec = tmp;
 		(*vec)->capacity = new_capacity;
 		SET_DATA_PTR(*vec);
@@ -77,6 +77,7 @@ static inline void vec_push(vec_t **vec, const void *value) {
 	unsigned char *chardata = (unsigned char*)(*vec)->data;
 	memcpy(&chardata[(*vec)->len * (*vec)->size], value, (*vec)->size);
 	(*vec)->len++;
+	RET_OK(0);
 }
 
 /** Removes the last element of 'vec' and copies its value into the varible 
@@ -98,5 +99,9 @@ static inline int vec_pop(vec_t **vec, void *value) {
 	(*vec)->len--;
 	RET_OK(0);
 }
+
+// static inline void vec_at(const vec_t *vec, size_t index, void *value) {
+// 	memcpy(value, &vec->data[index * vec->size], vec->size);
+// }
 
 #endif

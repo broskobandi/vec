@@ -6,5 +6,6 @@
 void test_vec_new();
 void test_vec_push();
 void test_vec_pop();
+void test_vec_at();
 
 #endif
