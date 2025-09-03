@@ -1,43 +1,45 @@
 #include "vec_utils.h"
 
-void *vec_generic_new(size_t size) {
+vec_t *vec_generic_new(size_t size) {
 	if (!size) RET_ERR("size cannot be 0.", NULL);
 	RET_OK(vec_new(size));
 }
 
-void vec_generic_del(void **vec) {
-	if (!vec || !*vec) RET_ERR("vec cannot be NULL.");
-	vec_t **v = (vec_t**)vec;
-	if ((*v)->magic != MAGIC) RET_ERR("Invalid pointer.");
-	vec_del(v);
+int vec_generic_del(vec_t **vec, size_t sizeof_type) {
+	if (!vec || !*vec) RET_ERR("vec cannot be NULL.", 1);
+	if ((*vec)->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
+	vec_del(vec);
+	RET_OK(0);
 }
 
-void vec_generic_push(void **vec, const void *value) {
-	if (!vec || !*vec || !value) RET_ERR("Invalid argument.");
-	vec_t **v = (vec_t**)vec;
-	if ((*v)->magic != MAGIC) RET_ERR("Invalid pointer.");
-	vec_push(v, value);
-}
-
-int vec_generic_pop(void **vec, void *value) {
+int vec_generic_push(vec_t **vec, const void *value, size_t sizeof_type) {
 	if (!vec || !*vec || !value) RET_ERR("Invalid argument.", 1);
-	vec_t **v = (vec_t**)vec;
-	if ((*v)->magic != MAGIC) RET_ERR("Invalid pointer.", 1);
-	if (!(*v)->len) RET_ERR("Empty vector cannot be popped.", 1);
+	if ((*vec)->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
+	if (vec_push(vec, value)) RET_ERR("vec_push() failed.", 1);
 	RET_OK(0);
 }
 
-int vec_generic_at(const void *vec, size_t index, void *value) {
+int vec_generic_pop(vec_t **vec, void *value, size_t sizeof_type) {
+	if (!vec || !*vec || !value) RET_ERR("Invalid argument.", 1);
+	if ((*vec)->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
+	if (!(*vec)->len) RET_ERR("Empty vector cannot be popped.", 1);
+	if (vec_pop(vec, value)) RET_ERR("vec_pop() failed.", 1);
+	RET_OK(0);
+}
+
+int vec_generic_at(const vec_t *vec, size_t index, void *value, size_t sizeof_type) {
 	if (!vec || !value) RET_ERR("Invalid argument.", 1);
-	vec_t *v = (vec_t*)vec;
-	if (v->magic != MAGIC) RET_ERR("Invalid pointer.", 1);
-	if (index >= v->len) RET_ERR("Requested index is out of bounds.", 1);
+	if (vec->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
+	if (index >= vec->len) RET_ERR("Requested index is out of bounds.", 1);
+	vec_at(vec, index, value);
 	RET_OK(0);
 }
 
-void vec_generic_remove(void **vec, size_t index) {
-	if (!vec || !*vec)  RET_ERR("Invalid argument.");
-	vec_t *v = (vec_t*)vec;
-	if (v->magic != MAGIC) RET_ERR("Invalid pointer.");
-	if (index >= v->len) RET_ERR("Requested index is out of bounds.");
+int vec_generic_remove(vec_t **vec, size_t index, size_t sizeof_type) {
+	if (!vec || !*vec)  RET_ERR("Invalid argument.", 1);
+	if ((*vec)->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
+	if (index >= (*vec)->len) RET_ERR("Requested index is out of bounds.", 1);
+	if (!(*vec)->len) RET_ERR("Cannot call vec_remove() on empty vector.", 1);
+	if (vec_remove(vec, index)) RET_ERR("vec_remove() failed.", 1);
+	RET_OK(0);
 }

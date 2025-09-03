@@ -15,9 +15,6 @@
 #define ROUNDUP(size)\
 	(((size) + alignof(max_align_t) - 1) & ~(alignof(max_align_t) - 1))
 
-/** Magic value for testing pointer validity. */
-#define MAGIC (size_t)(0xC001D00D)
-
 /** Stets the start of 'data' in vec.
  * \param vec The vector whose data is to be set. */
 #define SET_DATA_PTR(vec)\
@@ -27,7 +24,7 @@ do {\
 } while(0)
 
 /** Generic vector object to represent vecs of all types. */
-typedef struct vec {
+struct vec {
 	/** Pointer to the start of the data. */
 	void *data;
 	/** The number of elements of 'size' that can be stored in vec. */
@@ -36,9 +33,7 @@ typedef struct vec {
 	size_t len;
 	/** The size of an element. */
 	size_t size;
-	/** Magic value for testing pointer validity. */
-	size_t magic;
-} vec_t;
+};
 
 /** Allocate a new instance of vec.
  * \param size The size of the type of data to be stored in the vec. 
@@ -50,7 +45,6 @@ static inline vec_t *vec_new(size_t size) {
 	vec->size = size;
 	vec->capacity = DEFAULT_CAPACITY;
 	SET_DATA_PTR(vec);
-	vec->magic = MAGIC;
 	vec->len = 0;
 	RET_OK(vec);
 }
@@ -109,21 +103,25 @@ static inline void vec_at(const vec_t *vec, size_t index, void *value) {
 	memcpy(value, &chardata[index * vec->size], vec->size);
 }
 
-static inline void vec_remove(vec_t **vec, size_t index) {
+/** Removes the 'index'-th element from 'vec' and shrinks the vector appropriately.
+ * \param vec A pointer to the vector to be modified. 
+ * \param index The index of the element to remove. */
+static inline int vec_remove(vec_t **vec, size_t index) {
 	unsigned char *chardata = (unsigned char*)(*vec)->data;
 	size_t len_to_copy = (*vec)->len - index - 1;
 	size_t dst_index = index * (*vec)->size;
 	size_t src_index = dst_index + (*vec)->size;
-	memcpy(&chardata[dst_index], &chardata[src_index], len_to_copy * (*vec)->size);
+	memmove(&chardata[dst_index], &chardata[src_index], len_to_copy * (*vec)->size);
 	if ((*vec)->len - 1 <= (*vec)->capacity / 2 && (*vec)->capacity / 2 >= DEFAULT_CAPACITY) {
 		size_t new_capacity = (*vec)->capacity / 2;
 		vec_t *tmp = realloc(*vec, ROUNDUP(sizeof(vec_t)) + new_capacity * (*vec)->size);
-		if (!tmp) RET_ERR("Failed to realloc memory.");
+		if (!tmp) RET_ERR("Failed to realloc memory.", 1);
 		*vec = tmp;
 		(*vec)->capacity = new_capacity;
 		SET_DATA_PTR(*vec);
 	}
 	(*vec)->len--;
+	RET_OK(0);
 }
 
 #endif
