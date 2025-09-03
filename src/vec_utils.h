@@ -100,6 +100,10 @@ static inline int vec_pop(vec_t **vec, void *value) {
 	RET_OK(0);
 }
 
+/** Copies the value of the member found at 'index'-th element into 'value'.
+ * \param vec The vector to copy the data from.
+ * \param index The index of the element to access.
+ * \param value A pointer to the variable to copy the data into.*/
 static inline void vec_at(const vec_t *vec, size_t index, void *value) {
 	unsigned char *chardata = (unsigned char*)vec->data;
 	memcpy(value, &chardata[index * vec->size], vec->size);
