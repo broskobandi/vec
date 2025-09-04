@@ -45,51 +45,39 @@ SOFTWARE.
  * \param T The type of the vector. */
 #define TYPEDEF_VEC(T)\
 	typedef struct vec_##T vec_##T##_t;\
-	__attribute__((unused))\
 	static inline vec_##T##_t *vec_##T##_new() {\
 		return (vec_##T##_t*)vec_generic_new(sizeof(T));\
 	}\
-	__attribute__((unused))\
 	static inline int vec_##T##_del(vec_##T##_t **vec) {\
 		return vec_generic_del((vec_t**)vec, sizeof(T));\
 	}\
-	__attribute__((unused))\
 	static inline int vec_##T##_push(vec_##T##_t **vec, T value) {\
 		return vec_generic_push((vec_t**)vec, &value, sizeof(T));\
 	}\
-	__attribute__((unused))\
 	static inline int vec_##T##_pop(vec_##T##_t **vec, T *value) {\
 		return vec_generic_pop((vec_t**)vec, value, sizeof(T));\
 	}\
-	__attribute__((unused))\
 	static inline int vec_##T##_at(const vec_##T##_t *vec, size_t index, T *value) {\
 		return vec_generic_at((vec_t*)vec, index, value, sizeof(T));\
 	}\
-	__attribute__((unused))\
 	static inline int vec_##T##_remove(vec_##T##_t **vec, size_t index) {\
 		return vec_generic_remove((vec_t**)vec, index, sizeof(T));\
 	}\
-	__attribute__((unused))\
 	static inline size_t vec_##T##_len(const vec_##T##_t *vec) {\
 		return vec_generic_len((vec_t*)vec);\
 	}\
-	__attribute__((unused))\
 	static inline int vec_##T##_append(vec_##T##_t **vec, const T *array, size_t len) {\
 		return vec_generic_append((vec_t**)vec, (void*)array, len, sizeof(T));\
 	}\
-	__attribute__((unused))\
 	static inline const T *vec_##T##_ptr(const vec_##T##_t *vec, size_t index) {\
 		return (T*)vec_generic_ptr((vec_t*)vec, index, sizeof(T));\
 	}\
-	__attribute__((unused))\
 	static inline int vec_##T##_cpy(vec_##T##_t **dst, const vec_##T##_t *src) {\
 		return vec_generic_cpy((vec_t**)dst, (const vec_t*)src, sizeof(T));\
 	}\
-	__attribute__((unused))\
 	static inline size_t vec_##T##_capacity(const vec_##T##_t *vec) {\
 		return vec_generic_capacity((const vec_t*)vec, sizeof(T));\
 	}\
-	__attribute__((unused))\
 	static inline int vec_##T##_prepend(vec_##T##_t **vec, const T *array, size_t len) {\
 		return vec_generic_prepend((vec_t**)vec, (void*)array, len, sizeof(T));\
 	}\
