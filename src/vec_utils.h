@@ -122,7 +122,8 @@ static inline int vec_push(vec_t **vec, const void *value) {
  * \return 0 on success and 1 on failure. */
 static inline int vec_pop(vec_t **vec, void *value) {
 	unsigned char *chardata = (unsigned char*)(*vec)->data;
-	memcpy(value, &chardata[((*vec)->len - 1) * (*vec)->size], (*vec)->size);
+	if (value)
+		memcpy(value, &chardata[((*vec)->len - 1) * (*vec)->size], (*vec)->size);
 	if ((*vec)->len - 1 <= (*vec)->capacity / 2 && (*vec)->capacity / 2 >= DEFAULT_CAPACITY) {
 		// size_t new_capacity = (*vec)->capacity / 2;
 		// vec_t *tmp = realloc(*vec, ROUNDUP(sizeof(vec_t)) + new_capacity * (*vec)->size);

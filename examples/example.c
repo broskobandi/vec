@@ -51,7 +51,9 @@ int main(void) {
 	VEC_PUSH(intptr, &vec_intptr, &value);
 	VEC_PUSH(intptr, &vec_intptr, &value);
 
-	/* Pop the last element off the vectors and return them. */
+	/* Pop the last element off the vectors and return them.
+	 * Out param can be NULL if only the removal of the last element is desired
+	 * but the actual value is not important. */
 	int last_int = 0;
 	VEC_POP(int, &vec_int, &last_int);
 	float last_float = 0;
