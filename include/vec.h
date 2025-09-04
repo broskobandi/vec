@@ -94,7 +94,7 @@ SOFTWARE.
 /** Removes and copies the last element of 'vec' into 'value'.
  * \param T The type of the vector.
  * \param vec The vector to be modified.
- * \param value A pointer to the variable to copy data into.
+ * \param value A pointer to the variable to copy data into (can be NULL).
  * \return 0 on success or 1 on failure.  */
 #define VEC_POP(T, vec, value) vec_##T##_pop((vec), (value))
 
@@ -153,7 +153,7 @@ int vec_generic_push(vec_t **vec, const void *value, size_t sizeof_type);
 
 /** Removes the last element of 'vec' and copies its value into 'value'.
  * \param vec A pointer to the vector to be modified. 
- * \param value A pointer to the variable to copy the data into. 
+ * \param value A pointer to the variable to copy the data into (can be NULL).
  * \return Returns 0 on success or 1 on failure. */
 int vec_generic_pop(vec_t **vec, void *value, size_t sizeof_type);
 

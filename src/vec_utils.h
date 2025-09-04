@@ -118,7 +118,7 @@ static inline int vec_push(vec_t **vec, const void *value) {
 /** Removes the last element of 'vec' and copies its value into the varible 
  * 'value' is pointing to.
  * \param vec A pointer to the vec object to be modified. 
- * \param value A pointer to the variable the data is to be copied into.
+ * \param value A pointer to the variable the data is to be copied into (can be NULL).
  * \return 0 on success and 1 on failure. */
 static inline int vec_pop(vec_t **vec, void *value) {
 	unsigned char *chardata = (unsigned char*)(*vec)->data;

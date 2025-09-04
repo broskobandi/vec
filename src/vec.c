@@ -62,10 +62,10 @@ int vec_generic_push(vec_t **vec, const void *value, size_t sizeof_type) {
 
 /** Removes the last element of 'vec' and copies its value into 'value'.
  * \param vec A pointer to the vector to be modified. 
- * \param value A pointer to the variable to copy the data into. 
+ * \param value A pointer to the variable to copy the data into (can be NULL).
  * \return Returns 0 on success or 1 on failure. */
 int vec_generic_pop(vec_t **vec, void *value, size_t sizeof_type) {
-	if (!vec || !*vec || !value) RET_ERR("Invalid argument.", 1);
+	if (!vec || !*vec) RET_ERR("Invalid argument.", 1);
 	if ((*vec)->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
 	if (!(*vec)->len) RET_ERR("Empty vector cannot be popped.", 1);
 	if (vec_pop(vec, value)) RET_ERR("vec_pop() failed.", 1);
