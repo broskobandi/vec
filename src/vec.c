@@ -159,3 +159,14 @@ int vec_generic_prepend(vec_t **vec, const void *arr, size_t len, size_t sizeof_
 	if (vec_prepend(vec, arr, len)) RET_ERR("vec_prepend() failed.", 1);
 	RET_OK(0);
 }
+
+int vec_generic_replace_range(vec_t **vec, const void *arr, size_t index, size_t len_to_replace, size_t array_len, size_t sizeof_type) {
+	if (!vec || !*vec || !arr || !len_to_replace || !array_len || !sizeof_type)
+		RET_ERR("Invalid argument.", 1);
+	if (index >= (*vec)->len || index + len_to_replace >= (*vec)->len)
+		RET_ERR("Index out of bounds.", 1);
+	if (sizeof_type != (*vec)->size) RET_ERR("Invalid pointer.", 1);
+	if (vec_replace_range(vec, arr, index, len_to_replace, array_len))
+		RET_ERR("vec_replace_range() failed.", 1);
+	RET_OK(0);
+}

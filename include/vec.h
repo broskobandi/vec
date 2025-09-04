@@ -81,6 +81,8 @@ SOFTWARE.
 	static inline int vec_##T##_prepend(vec_##T##_t **vec, const T *array, size_t len) {\
 		return vec_generic_prepend((vec_t**)vec, (void*)array, len, sizeof(T));\
 	}\
+	static inline int vec_##T##_insert(vec_##T##_t **vec, T value) {\
+	}
 
 /** Convenient type alias for the generated vectors. */
 #define VEC(T) vec_##T##_t
@@ -234,5 +236,7 @@ int vec_generic_cpy(vec_t **dst, const vec_t *src, size_t sizeof_type);
 size_t vec_generic_capacity(const vec_t *vec, size_t sizeof_type);
 
 int vec_generic_prepend(vec_t **vec, const void *array, size_t len, size_t sizeof_type);
+
+int vec_generic_replace_range(vec_t **vec, const void *arr, size_t index, size_t len_to_replace, size_t array_len, size_t sizeof_type);
 
 #endif

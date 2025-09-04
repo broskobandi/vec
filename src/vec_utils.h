@@ -196,11 +196,17 @@ static inline int vec_prepend(vec_t **vec, const void *arr, size_t len) {
 	}
 	unsigned char *chardata = (unsigned char*)(*vec)->data;
 	size_t move_size = len * (*vec)->size;
-	// size_t move_size = (*vec)->len * (*vec)->size;
 	memmove(chardata + move_size, chardata, move_size);
 	memcpy(chardata, arr, len * (*vec)->size);
 	(*vec)->len += len;
 	RET_OK(0);
+}
+
+static inline int vec_replace_range(vec_t **vec, const void *arr, size_t index, size_t len_to_replace, size_t array_len) {
+	index *= (*vec)->size;
+	len_to_replace *= (*vec)->size;
+	array_len *= (*vec)->size;
+	size_t new_len = (*vec)->len - 
 }
 
 #endif
