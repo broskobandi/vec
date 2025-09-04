@@ -100,12 +100,6 @@ static inline int resize(vec_t **vec, size_t new_capacity) {
  * \param value A pointer to a variable holding the value to be pushed to the end of vec. */
 static inline int vec_push(vec_t **vec, const void *value) {
 	if ((*vec)->len + 1 > (*vec)->capacity) {
-		// size_t new_capacity = (*vec)->capacity * 2;
-		// vec_t *tmp = realloc(*vec, new_capacity * (*vec)->size + ROUNDUP(sizeof(vec_t)));
-		// if (!tmp) RET_ERR("Failed to realloc memory.", 1);
-		// *vec = tmp;
-		// (*vec)->capacity = new_capacity;
-		// SET_DATA_PTR(*vec);
 		if (resize(vec, (*vec)->capacity * 2))
 			RET_ERR("resize() failed", 1);
 	}
@@ -125,12 +119,6 @@ static inline int vec_pop(vec_t **vec, void *value) {
 	if (value)
 		memcpy(value, &chardata[((*vec)->len - 1) * (*vec)->size], (*vec)->size);
 	if ((*vec)->len - 1 <= (*vec)->capacity / 2 && (*vec)->capacity / 2 >= DEFAULT_CAPACITY) {
-		// size_t new_capacity = (*vec)->capacity / 2;
-		// vec_t *tmp = realloc(*vec, ROUNDUP(sizeof(vec_t)) + new_capacity * (*vec)->size);
-		// if (!tmp) RET_ERR("Failed to realloc memory.", 1);
-		// *vec = tmp;
-		// (*vec)->capacity = new_capacity;
-		// SET_DATA_PTR(*vec);
 		if (resize(vec, (*vec)->capacity / 2))
 			RET_ERR("resize() failed.", 1);
 	}
@@ -157,32 +145,10 @@ static inline int vec_remove(vec_t **vec, size_t index) {
 	size_t src_index = dst_index + (*vec)->size;
 	memmove(&chardata[dst_index], &chardata[src_index], len_to_copy * (*vec)->size);
 	if ((*vec)->len - 1 <= (*vec)->capacity / 2 && (*vec)->capacity / 2 >= DEFAULT_CAPACITY) {
-		// size_t new_capacity = (*vec)->capacity / 2;
-		// vec_t *tmp = realloc(*vec, ROUNDUP(sizeof(vec_t)) + new_capacity * (*vec)->size);
-		// if (!tmp) RET_ERR("Failed to realloc memory.", 1);
-		// *vec = tmp;
-		// (*vec)->capacity = new_capacity;
-		// SET_DATA_PTR(*vec);
 		if (resize(vec, (*vec)->capacity / 2))
 			RET_ERR("resize() failed.", 1);
 	}
 	(*vec)->len--;
-	RET_OK(0);
-}
-
-/** Appends an array at the end of a vector.
- * \param vec The vector to be modified.
- * \param arr The array to be appended.
- * \param len The length of the array to be appended.
- * \return 0 on success or 1 on failure. */
-static inline int vec_append(vec_t **vec, const void *arr, size_t len) {
-	while ((*vec)->len + len > (*vec)->capacity) {
-		if (resize(vec, (*vec)->capacity * 2))
-			RET_ERR("resize() failed.", 1);
-	}
-	unsigned char *chardata = (unsigned char*)(*vec)->data;
-	memcpy(&chardata[(*vec)->len * (*vec)->size], arr, len * (*vec)->size);
-	(*vec)->len += len;
 	RET_OK(0);
 }
 
@@ -204,6 +170,36 @@ static inline int vec_cpy(vec_t **dst, const vec_t *src) {
 		if (resize(dst, src->capacity))
 			RET_ERR("resize() failed.", 1);
 	memcpy(*dst, src, ROUNDUP(sizeof(vec_t)) + src->len * src->size);
+	RET_OK(0);
+}
+
+/** Appends an array at the end of a vector.
+ * \param vec The vector to be modified.
+ * \param arr The array to be appended.
+ * \param len The length of the array to be appended.
+ * \return 0 on success or 1 on failure. */
+static inline int vec_append(vec_t **vec, const void *arr, size_t len) {
+	while ((*vec)->len + len > (*vec)->capacity) {
+		if (resize(vec, (*vec)->capacity * 2))
+			RET_ERR("resize() failed.", 1);
+	}
+	unsigned char *chardata = (unsigned char*)(*vec)->data;
+	memcpy(&chardata[(*vec)->len * (*vec)->size], arr, len * (*vec)->size);
+	(*vec)->len += len;
+	RET_OK(0);
+}
+
+static inline int vec_prepend(vec_t **vec, const void *arr, size_t len) {
+	while ((*vec)->len + len > (*vec)->capacity) {
+		if (resize(vec, (*vec)->capacity * 2))
+			RET_ERR("resize() failed.", 1);
+	}
+	unsigned char *chardata = (unsigned char*)(*vec)->data;
+	size_t move_size = len * (*vec)->size;
+	// size_t move_size = (*vec)->len * (*vec)->size;
+	memmove(chardata + move_size, chardata, move_size);
+	memcpy(chardata, arr, len * (*vec)->size);
+	(*vec)->len += len;
 	RET_OK(0);
 }
 

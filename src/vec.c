@@ -152,3 +152,10 @@ size_t vec_generic_capacity(const vec_t *vec, size_t sizeof_type) {
 	if (!vec || !sizeof_type) RET_ERR("Invalid argument.", (size_t)-1);
 	RET_OK(vec->capacity);
 }
+
+int vec_generic_prepend(vec_t **vec, const void *arr, size_t len, size_t sizeof_type) {
+	if (!vec || !*vec || !arr) RET_ERR("Invalid argument.", 1);
+	if ((*vec)->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
+	if (vec_prepend(vec, arr, len)) RET_ERR("vec_prepend() failed.", 1);
+	RET_OK(0);
+}

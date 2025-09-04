@@ -8,41 +8,35 @@
  * */
 
 void test_vec_new() {
-	{ // Normal case
-		vec_t *vec = vec_new(sizeof(int));
-		ASSERT(vec);
-		ASSERT(vec->capacity == DEFAULT_CAPACITY);
-		ASSERT(vec->data == (unsigned char*)vec + ROUNDUP(sizeof(vec_t)));
-		ASSERT(vec->len == 0);
-		ASSERT(vec->size == sizeof(int));
-		vec_del(&vec);
-	}
+	vec_t *vec = vec_new(sizeof(int));
+	ASSERT(vec);
+	ASSERT(vec->capacity == DEFAULT_CAPACITY);
+	ASSERT(vec->data == (unsigned char*)vec + ROUNDUP(sizeof(vec_t)));
+	ASSERT(vec->len == 0);
+	ASSERT(vec->size == sizeof(int));
+	vec_del(&vec);
 }
 
 void test_vec_del() {
-	{ // Normal case
-		vec_t *vec = vec_new(sizeof(int));
-		vec_del(&vec);
-		ASSERT(!vec);
-	}
+	vec_t *vec = vec_new(sizeof(int));
+	vec_del(&vec);
+	ASSERT(!vec);
 }
 
 void test_vec_push() {
-	{ // Normal case
-		vec_t *vec = vec_new(sizeof(size_t));
+	vec_t *vec = vec_new(sizeof(size_t));
 
-		size_t expected_capacity = DEFAULT_CAPACITY;
-		for (size_t i = 0; i < DEFAULT_CAPACITY * 10; i++) {
-			ASSERT(!vec_push(&vec, &i));
-			if (vec->len > expected_capacity)
-				expected_capacity *= 2;
-			ASSERT(vec->capacity == expected_capacity);
-			ASSERT(vec->len == i + 1);
-			size_t *data = (size_t*)vec->data;
-			ASSERT(data[i] == i);
-		}
-		vec_del(&vec);
+	size_t expected_capacity = DEFAULT_CAPACITY;
+	for (size_t i = 0; i < DEFAULT_CAPACITY * 10; i++) {
+		ASSERT(!vec_push(&vec, &i));
+		if (vec->len > expected_capacity)
+			expected_capacity *= 2;
+		ASSERT(vec->capacity == expected_capacity);
+		ASSERT(vec->len == i + 1);
+		size_t *data = (size_t*)vec->data;
+		ASSERT(data[i] == i);
 	}
+	vec_del(&vec);
 }
 
 void test_vec_pop() {
@@ -91,54 +85,50 @@ void test_vec_pop() {
 }
 
 void test_vec_at() {
-	{ // Normal case
-		vec_t *vec = vec_new(sizeof(int));
-		int value1 = 1;
-		int value2 = 2;
-		int value3 = 3;
-		ASSERT(!vec_push(&vec, &value1));
-		ASSERT(!vec_push(&vec, &value2));
-		ASSERT(!vec_push(&vec, &value3));
-		int value4 = 0;
-		int value5 = 0;
-		int value6 = 0;
-		vec_at(vec, 0, &value4);
-		vec_at(vec, 1, &value5);
-		vec_at(vec, 2, &value6);
-		ASSERT(value4 == value1);
-		ASSERT(value5 == value2);
-		ASSERT(value6 == value3);
-		vec_del(&vec);
-	}
+	vec_t *vec = vec_new(sizeof(int));
+	int value1 = 1;
+	int value2 = 2;
+	int value3 = 3;
+	ASSERT(!vec_push(&vec, &value1));
+	ASSERT(!vec_push(&vec, &value2));
+	ASSERT(!vec_push(&vec, &value3));
+	int value4 = 0;
+	int value5 = 0;
+	int value6 = 0;
+	vec_at(vec, 0, &value4);
+	vec_at(vec, 1, &value5);
+	vec_at(vec, 2, &value6);
+	ASSERT(value4 == value1);
+	ASSERT(value5 == value2);
+	ASSERT(value6 == value3);
+	vec_del(&vec);
 }
 
 void test_vec_remove() {
-	{ // Normal case
-		vec_t *vec = vec_new(sizeof(size_t));
-		for (size_t i = 0; i < DEFAULT_CAPACITY + 1; i++) {
-			ASSERT(!vec_push(&vec, &i));
-		}
-		ASSERT(vec->len == DEFAULT_CAPACITY + 1);
-		ASSERT(vec->capacity == DEFAULT_CAPACITY * 2);
-		ASSERT(!vec_remove(&vec, DEFAULT_CAPACITY / 2));
-		ASSERT(vec->capacity == DEFAULT_CAPACITY);
-		ASSERT(vec->len == DEFAULT_CAPACITY);
-		for (size_t i = 0; i < DEFAULT_CAPACITY; i++) {
-			size_t value = 0;
-			vec_at(vec, i, &value);
-			if (i >= DEFAULT_CAPACITY / 2) {
-				ASSERT(value == i + 1);
-			} else {
-				ASSERT(value == i);
-			}
-		}
-		vec_del(&vec);
+	vec_t *vec = vec_new(sizeof(size_t));
+	for (size_t i = 0; i < DEFAULT_CAPACITY + 1; i++) {
+		ASSERT(!vec_push(&vec, &i));
 	}
+	ASSERT(vec->len == DEFAULT_CAPACITY + 1);
+	ASSERT(vec->capacity == DEFAULT_CAPACITY * 2);
+	ASSERT(!vec_remove(&vec, DEFAULT_CAPACITY / 2));
+	ASSERT(vec->capacity == DEFAULT_CAPACITY);
+	ASSERT(vec->len == DEFAULT_CAPACITY);
+	for (size_t i = 0; i < DEFAULT_CAPACITY; i++) {
+		size_t value = 0;
+		vec_at(vec, i, &value);
+		if (i >= DEFAULT_CAPACITY / 2) {
+			ASSERT(value == i + 1);
+		} else {
+			ASSERT(value == i);
+		}
+	}
+	vec_del(&vec);
 }
 
 void test_vec_append() {
 	{ // Normal case
-		const char *str = "some text";
+		const char *str = "some long long long long long long text";
 		vec_t *vec = vec_new(sizeof(char));
 		ASSERT(!vec_append(&vec, str, strlen(str)));
 		ASSERT(!memcmp((char*)vec->data, str, strlen(str)));
@@ -146,43 +136,49 @@ void test_vec_append() {
 		vec_del(&vec);
 	}
 	{ // Normal case: pointer array
-		int *arr[] = {NULL, NULL, NULL};
+		int *arr[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 		vec_t *vec = vec_new(sizeof(int*));
 		ASSERT(vec);
-		ASSERT(!vec_append(&vec, arr, 3));
+		ASSERT(!vec_append(&vec, arr, 7));
 		ASSERT(!memcmp((int*)vec->data, arr, sizeof(arr)));
-		ASSERT(vec->len == 3);
+		ASSERT(vec->len == 7);
 		vec_del(&vec);
 	}
 }
 
 void test_vec_ptr() {
-	{ // Normal case
-		vec_t *vec = vec_new(sizeof(int));
-		int value = 5;
-		vec_push(&vec, &value);
-		const int *ptr = vec_ptr(vec, 0);
-		ASSERT(*ptr == value);
-		vec_del(&vec);
-	}
+	vec_t *vec = vec_new(sizeof(int));
+	int value = 5;
+	vec_push(&vec, &value);
+	const int *ptr = vec_ptr(vec, 0);
+	ASSERT(*ptr == value);
+	vec_del(&vec);
 }
 
 void test_vec_cpy() {
-	{ // Normal case
-		vec_t *vec = vec_new(sizeof(size_t));
-		for (size_t i = 0; i < DEFAULT_CAPACITY * 10; i++) {
-			ASSERT(!vec_push(&vec, &i));
-		}
-		vec_t *vec2 = vec_new(sizeof(size_t));
-		ASSERT(!vec_cpy(&vec2, vec));
-		ASSERT(!memcmp(vec2, vec, ROUNDUP(sizeof(vec_t) + vec->size * vec->len)));
-		ASSERT(vec2->len == vec->len);
-		ASSERT(vec2->capacity == vec->capacity);
-		ASSERT(vec2->size == vec->size);
-		ASSERT(!memcmp(vec2->data, vec->data, vec->size * vec->len));
-		vec_del(&vec);
-		vec_del(&vec2);
+	vec_t *vec = vec_new(sizeof(size_t));
+	for (size_t i = 0; i < DEFAULT_CAPACITY * 10; i++) {
+		ASSERT(!vec_push(&vec, &i));
 	}
+	vec_t *vec2 = vec_new(sizeof(size_t));
+	ASSERT(!vec_cpy(&vec2, vec));
+	ASSERT(!memcmp(vec2, vec, ROUNDUP(sizeof(vec_t) + vec->size * vec->len)));
+	ASSERT(vec2->len == vec->len);
+	ASSERT(vec2->capacity == vec->capacity);
+	ASSERT(vec2->size == vec->size);
+	ASSERT(!memcmp(vec2->data, vec->data, vec->size * vec->len));
+	vec_del(&vec);
+	vec_del(&vec2);
+}
+
+void test_vec_prepend() {
+	vec_t *vec = vec_new(sizeof(int));
+	ASSERT(!vec_append(&vec, (int[]){5, 6, 7}, 3));
+	ASSERT(!vec_prepend(&vec, (int[]){1, 2, 3, 4}, 4));
+	ASSERT(vec->len == 7);
+	int exp[] = {1, 2, 3, 4, 5, 6, 7};
+	ASSERT(!memcmp(vec->data, exp, sizeof(exp)));
+	vec_del(&vec);
 }
 
 /** 
@@ -190,121 +186,47 @@ void test_vec_cpy() {
  * */
 
 void test_vec_generic_new() {
-	{ // Normal case
-		vec_t *vec = vec_generic_new(sizeof(int));
-		ASSERT(vec);
-		ASSERT(vec->size == sizeof(int));
-		ASSERT(vec->capacity == DEFAULT_CAPACITY);
-		ASSERT(vec->len == 0);
-		ASSERT(vec->data == (unsigned char*)vec + ROUNDUP(sizeof(vec_t)));
-		vec_del(&vec);
-	}
-	{ // size is 0.
-		vec_t *vec = vec_generic_new(0);
-		ASSERT(!vec);
-		vec_del(&vec);
-	}
+	vec_t *vec = vec_generic_new(sizeof(int));
+	ASSERT(vec);
+	ASSERT(vec->size == sizeof(int));
+	ASSERT(vec->capacity == DEFAULT_CAPACITY);
+	ASSERT(vec->len == 0);
+	ASSERT(vec->data == (unsigned char*)vec + ROUNDUP(sizeof(vec_t)));
+	vec_del(&vec);
 }
 
 void test_vec_generic_del() {
-	{ // Normal case
-		vec_t *vec = vec_generic_new(sizeof(int));
-		ASSERT(!vec_generic_del(&vec, sizeof(int)));
-		ASSERT(!vec);
-		vec_del(&vec);
-	}
-	{ // no ptr
-		ASSERT(vec_generic_del(NULL, sizeof(int)));
-	}
-	{ // vec is NULL
-		vec_t *vec = NULL;
-		ASSERT(vec_generic_del(&vec, sizeof(int)));
-	}
-	{ // invalid ptr
-		vec_t *vec = vec_new(sizeof(char));
-		ASSERT(vec_generic_del(&vec, sizeof(int)));
-		vec_del(&vec);
-	}
+	vec_t *vec = vec_generic_new(sizeof(int));
+	ASSERT(!vec_generic_del(&vec, sizeof(int)));
+	ASSERT(!vec);
+	vec_del(&vec);
 }
 
 void test_vec_generic_push() {
-	{ // Normal case
-		vec_t *vec = vec_new(sizeof(int));
-		int value = 5;
-		ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
-		vec_del(&vec);
-	}
-	{ // Invalid arguments
-		vec_t *vec = NULL;
-		int value = 5;
-		ASSERT(vec_generic_push(NULL, &value, sizeof(int)));
-		ASSERT(vec_generic_push(&vec, &value, sizeof(int)));
-		vec = vec_generic_new(sizeof(int));
-		ASSERT(vec_generic_push(&vec, NULL, sizeof(int)));
-		vec_del(&vec);
-	}
-	{ // Invalid pointer
-		vec_t *vec = vec_generic_new(sizeof(char));
-		int value = 5;
-		ASSERT(vec_generic_push(&vec, &value, sizeof(int)));
-		vec_del(&vec);
-	}
+	vec_t *vec = vec_new(sizeof(int));
+	int value = 5;
+	ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
+	vec_del(&vec);
 }
 
 void test_vec_generic_pop() {
-	{ // Normal case
-		vec_t *vec = vec_generic_new(sizeof(int));
-		int in = 5;
-		ASSERT(!vec_generic_push(&vec, &in, sizeof(int)));
-		int out = 0;
-		ASSERT(!vec_generic_pop(&vec, &out, sizeof(int)));
-		ASSERT(in == out);
-		vec_del(&vec);
-	}
-	{ // Invalid arguments
-		vec_t *vec = NULL;
-		int value = 0;
-		ASSERT(vec_generic_pop(NULL, &value, sizeof(int)));
-		ASSERT(vec_generic_pop(&vec, &value, sizeof(int)));
-		vec = vec_generic_new(sizeof(int));
-		ASSERT(vec_generic_pop(&vec, NULL, sizeof(int)));
-		vec_del(&vec);
-	}
-	{ // Invlaid pointer
-		vec_t *vec = vec_generic_new(sizeof(char));
-		int value = 0;
-		ASSERT(vec_generic_pop(&vec, &value, sizeof(int)));
-		vec_del(&vec);
-	}
-	{ // Empty vector
-		vec_t *vec = vec_generic_new(sizeof(int));
-		int value = 0;
-		ASSERT(vec_generic_pop(&vec, &value, sizeof(int)));
-		vec_del(&vec);
-	}
+	vec_t *vec = vec_generic_new(sizeof(int));
+	int in = 5;
+	ASSERT(!vec_generic_push(&vec, &in, sizeof(int)));
+	int out = 0;
+	ASSERT(!vec_generic_pop(&vec, &out, sizeof(int)));
+	ASSERT(in == out);
+	vec_del(&vec);
 }
 
 void test_vec_generic_at() {
 	{ // Normal case
-		vec_t *vec = vec_generic_new(sizeof(int));
-		int in = 5;
-		ASSERT(!vec_generic_push(&vec, &in, sizeof(int)));
-		int out = 0;
-		ASSERT(!vec_generic_at(vec, 0, &out, sizeof(int)));
-		vec_del(&vec);
-	}
-	{ // Invalid argument
-		vec_t *vec = vec_generic_new(sizeof(int));
-		int value = 0;
-		ASSERT(vec_generic_at(NULL, 0, &value, sizeof(int)));
-		ASSERT(vec_generic_at(vec, 0, NULL, sizeof(int)));
-		vec_del(&vec);
-	}
-	{ // Invalid ptr
-		vec_t *vec = vec_generic_new(sizeof(char));
-		int value = 0;
-		ASSERT(vec_generic_at(vec, 0, &value, sizeof(int)));
-		vec_del(&vec);
+	vec_t *vec = vec_generic_new(sizeof(int));
+	int in = 5;
+	ASSERT(!vec_generic_push(&vec, &in, sizeof(int)));
+	int out = 0;
+	ASSERT(!vec_generic_at(vec, 0, &out, sizeof(int)));
+	vec_del(&vec);
 	}
 	{ // Out of bounds
 		vec_t *vec = vec_generic_new(sizeof(int));
@@ -323,16 +245,6 @@ void test_vec_generic_remove() {
 		ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
 		ASSERT(!vec_generic_remove(&vec, 1, sizeof(int)));
 		ASSERT(vec->len == 2);
-		vec_del(&vec);
-	}
-	{ // Invalid argument
-		vec_t *vec = NULL;
-		ASSERT(vec_generic_remove(NULL, 0, sizeof(int)));
-		ASSERT(vec_generic_remove(&vec, 0, sizeof(int)));
-	}
-	{ // Invalid pointer
-		vec_t *vec = vec_generic_new(sizeof(char));
-		ASSERT(vec_generic_remove(&vec, 0, sizeof(int)));
 		vec_del(&vec);
 	}
 	{ // Out of bounds
@@ -359,76 +271,42 @@ void test_vec_generic_append() {
 	}
 	{ // Normal case: ptr array
 		vec_t *vec = vec_generic_new(sizeof(int*));
-		int *arr[] = {NULL, NULL, NULL};
-		ASSERT(!vec_generic_append(&vec, arr, 3, sizeof(int*)));
+		int *arr[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+		ASSERT(!vec_generic_append(&vec, arr, 7, sizeof(int*)));
 		ASSERT(!memcmp((int*)vec->data, arr, sizeof(arr)));
-		vec_del(&vec);
-	}
-	{ // Invalid argument
-		vec_t *vec = NULL;
-		const char *str = "some text";
-		ASSERT(vec_generic_append(NULL, str, strlen(str), sizeof(char)));
-		ASSERT(vec_generic_append(&vec, str, strlen(str), sizeof(char)));
-		vec = vec_generic_new(sizeof(char));
-		ASSERT(vec_generic_append(&vec, NULL, strlen(str), sizeof(char)));
-		vec_del(&vec);
-	} 
-	{ // Invalid pointer 
-		vec_t *vec = vec_generic_new(sizeof(int));
-		const char *str = "some text";
-		ASSERT(vec_generic_append(&vec, str, strlen(str), sizeof(char)));
 		vec_del(&vec);
 	}
 }
 
 void test_vec_generic_ptr() {
-	{ // Normal case
-		vec_t *vec = vec_generic_new(sizeof(int));
-		int value = 5;
-		ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
-		ASSERT(*(int*)vec_generic_ptr(vec, 0, sizeof(int)) == value);
-		ASSERT(!vec_generic_del(&vec, sizeof(int)));
-	}
-	{ // Invalid argument
-		ASSERT(!vec_generic_ptr(NULL, 0, sizeof(int)));
-		vec_t *vec = vec_generic_new(sizeof(int));
-		ASSERT(!vec_generic_ptr(vec, 0, 0));
-		ASSERT(!vec_generic_ptr(vec, 0, sizeof(float)));
-		ASSERT(!vec_generic_ptr(vec, 5, sizeof(float)));
-		ASSERT(!vec_generic_del(&vec, sizeof(int)));
-	}
+	vec_t *vec = vec_generic_new(sizeof(int));
+	int value = 5;
+	ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
+	ASSERT(*(int*)vec_generic_ptr(vec, 0, sizeof(int)) == value);
+	ASSERT(!vec_generic_del(&vec, sizeof(int)));
 }
 
 void test_vec_generic_cpy() {
-	{ // Normal case
-		vec_t *vec = vec_generic_new(sizeof(int));
-		int value = 5;
-		ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
-		vec_t *vec2 = vec_generic_new(sizeof(int));
-		ASSERT(!vec_generic_cpy(&vec2, vec, sizeof(int)));
-		vec_del(&vec);
-	}
-	{ // Invalid argument
-		vec_t *vec = NULL;
-		vec_t *vec2 = NULL;
-		ASSERT(vec_generic_cpy(NULL, NULL, 0));
-		ASSERT(vec_generic_cpy(&vec, vec2, 0));
-		vec = vec_generic_new(sizeof(int));
-		ASSERT(vec_generic_cpy(&vec, vec2, sizeof(int)));
-		ASSERT(vec_generic_cpy(&vec, vec2, sizeof(int)));
-		ASSERT(!vec_generic_del(&vec, sizeof(int)));
-	}
+	vec_t *vec = vec_generic_new(sizeof(int));
+	int value = 5;
+	ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
+	vec_t *vec2 = vec_generic_new(sizeof(int));
+	ASSERT(!vec_generic_cpy(&vec2, vec, sizeof(int)));
+	vec_del(&vec);
 }
 
 void test_vec_generic_capacity() {
-	{ // Normal case
-		vec_t *vec = vec_generic_new(sizeof(int));
-		ASSERT(vec_generic_capacity(vec, sizeof(int)) == DEFAULT_CAPACITY);
-		ASSERT(!vec_generic_del(&vec, sizeof(int)));
-	}
-	{ // Invalid argument
-		ASSERT(vec_generic_capacity(NULL, 0));
-	}
+	vec_t *vec = vec_generic_new(sizeof(int));
+	ASSERT(vec_generic_capacity(vec, sizeof(int)) == DEFAULT_CAPACITY);
+	ASSERT(!vec_generic_del(&vec, sizeof(int)));
+}
+
+void test_vec_generic_prepend() {
+	vec_t *vec = vec_generic_new(sizeof(int));
+	ASSERT(!vec_generic_append(&vec, (int[]){5, 6, 7}, 3, sizeof(int)));
+	ASSERT(!vec_generic_prepend(&vec, (int[]){1, 2, 3, 4}, 4, sizeof(int)));
+	ASSERT(!memcmp(vec->data, (int[]){1, 2, 3, 4, 5, 6, 7}, sizeof(int) * 7));
+	ASSERT(!vec_generic_del(&vec, sizeof(int)));
 }
 
 /** 
@@ -574,6 +452,7 @@ void test_vec_int_append() {
 		int *arr[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 		ASSERT(!vec_intptr_append(&vec, arr, 7));
 		ASSERT(!vec_intptr_append(&vec, arr, 7));
+		ASSERT(!memcmp(vec_intptr_ptr(vec, 0), arr, sizeof(arr)));
 	}
 }
 
@@ -601,5 +480,24 @@ void test_vec_int_capacity() {
 		vec_int_t *vec = vec_int_new();
 		ASSERT(vec_int_capacity(vec) == DEFAULT_CAPACITY);
 		ASSERT(!vec_int_del(&vec));
+	}
+}
+
+void test_vec_int_prepend() {
+	{ // Normal case
+		vec_int_t *vec = vec_int_new();
+		ASSERT(!vec_int_append(&vec, (int[]){4, 5, 6}, 3));
+		ASSERT(!vec_int_prepend(&vec, (int[]){1, 2, 3}, 3));
+		ASSERT(!memcmp(vec_int_ptr(vec, 0), (int[]){1, 2, 3, 4, 5, 6}, sizeof(int) * 6));
+		ASSERT(vec_int_len(vec) == 6);
+		ASSERT(!vec_int_del(&vec));
+	}
+	{ // Normal case: intptr
+		vec_intptr_t *vec = vec_intptr_new();
+		ASSERT(!vec_intptr_append(&vec, (intptr[]){NULL, NULL, NULL}, 3));
+		ASSERT(!vec_intptr_prepend(&vec, (intptr[]){NULL, NULL, NULL}, 3));
+		ASSERT(!memcmp(vec_intptr_ptr(vec, 0), (intptr[]){NULL, NULL, NULL, NULL, NULL, NULL}, sizeof(intptr) * 6));
+		ASSERT(vec_intptr_len(vec) == 6);
+		ASSERT(!vec_intptr_del(&vec));
 	}
 }

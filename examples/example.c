@@ -89,7 +89,7 @@ int main(void) {
 	VEC_APPEND(int, &vec_int, ((int[]){1, 2, 3}), 3);
 	VEC_APPEND(float, &vec_float, ((float[]){1.1f, 2.2f, 3.3f}), 3);
 	VEC_APPEND(obj_t, &vec_obj, ((obj_t[]){{0}, {0}, {0}}), 3);
-	vec_intptr_append(&vec_intptr, (int*[]){NULL, NULL, NULL}, 3);
+	VEC_APPEND(intptr, &vec_intptr, ((intptr[]){NULL, NULL, NULL}), 3);
 
 	/* Get a const pointer to the stored data. */
 	const int *ptr_to_int = VEC_PTR(int, vec_int, 0);
@@ -117,6 +117,12 @@ int main(void) {
 	printf("Capacity of float vec: %lu\n", VEC_CAPACITY(float, vec_float));
 	printf("Capacity of obj vec: %lu\n", VEC_CAPACITY(obj_t, vec_obj));
 	printf("Capacity of ptr vec: %lu\n", VEC_CAPACITY(intptr, vec_intptr));
+
+	/* Prepend data at the beginning of the vecotr. */
+	VEC_PREPEND(int, &vec_int, ((int[]){1, 2, 3}), 3);
+	VEC_PREPEND(float, &vec_float, ((float[]){1.1f, 2.2f, 3.3f}), 3);
+	VEC_PREPEND(obj_t, &vec_obj, ((obj_t[]){{0}, {0}, {0}}), 3);
+	VEC_PREPEND(intptr, &vec_intptr, ((intptr[]){NULL, NULL, NULL}), 3);
 
 	/* Don't forget to delete the vectors. */
 	VEC_DEL(int, &vec_int);

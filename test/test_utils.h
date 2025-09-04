@@ -16,6 +16,7 @@ void test_vec_remove();
 void test_vec_append();
 void test_vec_ptr();
 void test_vec_cpy();
+void test_vec_prepend();
 
 /** 
  * Generic vector - public functions
@@ -31,6 +32,7 @@ void test_vec_generic_append();
 void test_vec_generic_ptr();
 void test_vec_generic_cpy();
 void test_vec_generic_capacity();
+void test_vec_generic_prepend();
 
 /** 
  * Type-specific vector - public functions
@@ -49,5 +51,6 @@ void test_vec_int_append();
 void test_vec_int_ptr();
 void test_vec_int_cpy();
 void test_vec_int_capacity();
+void test_vec_int_prepend();
 
 #endif
