@@ -29,6 +29,8 @@ SOFTWARE.
  * */
 
 #include "vec.h"
+#include <stdlib.h>
+#include <string.h>
 
 _Thread_local const char *g_err = NULL;
 
@@ -41,5 +43,110 @@ struct vec {
 	size_t capacity;
 };
 
-typedef struct vec vec_t;
+vec_t *vec_new(size_t size) {
+	if (!size || size & (size - 1)) {
+		g_err = "Invalid argument.";
+		return NULL;
+	}
+	vec_t *vec = malloc(sizeof(vec_t));
+	if (!vec) {
+		g_err = "Failed to allocate vec.";
+		return NULL;
+	}
+	vec->data = malloc(size * DEFAULT_CAPACITY);
+	if (!vec->data) {
+		g_err = "Failed to allocate vec->data.";
+		free(vec);
+		return NULL;
+	}
+	vec->len = 0;
+	vec->capacity = DEFAULT_CAPACITY;
+	vec->size = size;
+	return vec;
+}
 
+void vec_del(vec_t *vec) {
+	if (!vec) {
+		g_err = "Invalid argument.";
+		return;
+	}
+	if (!vec->data) return;
+	free(vec->data);
+	free(vec);
+}
+
+size_t vec_len(const vec_t *vec) {
+	if (!vec) {
+		g_err = "Invalid argument.";
+		return (size_t)-1;
+	}
+	return vec->len;
+}
+
+size_t vec_capacity(const vec_t *vec) {
+	if (!vec) {
+		g_err = "Invalid argument.";
+		return (size_t)-1;
+	}
+	return vec->capacity;
+}
+
+size_t vec_size(const vec_t *vec) {
+	if (!vec) {
+		g_err = "Invalid argument.";
+		return (size_t)-1;
+	}
+	return vec->size;
+}
+
+static inline int resize(vec_t *vec, size_t new_capacity) {
+	void *tmp = realloc(vec->data, new_capacity * vec->size);
+	if (!tmp) {
+		g_err = "realloc() failed.";
+		return 1;
+	}
+	vec->data = tmp;
+	vec->capacity = new_capacity;
+	return 0;
+}
+
+int vec_push(vec_t *vec, const void *value, size_t size) {
+	if (!vec || !value || size != vec->size) {
+		g_err = "Invalid argument";
+		return 1;
+	}
+	if (vec->len + 1 > vec->capacity) {
+		if (resize(vec, vec->capacity * 2)) {
+			g_err = "resize() failed.";
+			return 1;
+		}
+	}
+	memcpy(vec->data, value, size);
+	vec->len++;
+	return 0;
+}
+
+int vec_pop(vec_t *vec, void *value, size_t size) {
+	if (!vec || size != vec->size) {
+		g_err = "Invalid argument.";
+		return 1;
+	}
+	if (value)
+		memcpy(value, vec->data, size);
+	if (vec->len - 1 <= vec->capacity / 2 && vec->capacity / 2 >= DEFAULT_CAPACITY) {
+		if (resize(vec, vec->capacity / 2)) {
+			g_err = "resize() failed.";
+			return 1;
+		}
+	}
+	vec->len--;
+	return 0;
+}
+
+const char *vec_get_error() {
+	return g_err;
+}
+
+void vec_reset_error() {
+	g_err = NULL;
+}
