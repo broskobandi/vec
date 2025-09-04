@@ -74,6 +74,9 @@ SOFTWARE.
 	}\
 	static inline int vec_##T##_cpy(vec_##T##_t **dst, const vec_##T##_t *src) {\
 		return vec_generic_cpy((vec_t**)dst, (const vec_t*)src, sizeof(T));\
+	}\
+	static inline size_t vec_##T##_capacity(const vec_##T##_t *vec) {\
+		return vec_generic_capacity((const vec_t*)vec, sizeof(T));\
 	}
 
 /** Convenient type alias for the generated vectors. */
@@ -122,7 +125,7 @@ SOFTWARE.
 /** Returns the number of elements stored in 'vec'.
  * \param T The type of the vector.
  * \param vec The vector to access. 
- * \return The number of elements stored in vec. */
+ * \return The number of elements stored in vec or (size_t)-1 on failure. */
 #define VEC_LEN(T, vec) vec_##T##_len((vec))
 
 /** Appends an array at the end of the vector.
@@ -146,6 +149,8 @@ SOFTWARE.
  * \param src The source vector.
  * \return 0 on success or 1 on failure. */
 #define VEC_CPY(T, dst, src) vec_##T##_cpy((dst), (src))
+
+#define VEC_CAPACITY(T, vec) vec_##T##_capacity((vec))
 
 /*****************************************************************************
  * Generic api
@@ -192,7 +197,7 @@ int vec_generic_remove(vec_t **vec, size_t index, size_t sizeof_type);
 
 /** Return the length of the vector.
  * \param vec The vector object to access.
- * \return The length of the vector.*/
+ * \return The length of the vector or (size_t)-1 on failure.*/
 size_t vec_generic_len(const vec_t *vec);
 
 /** Appends an array at the end of the vector.
@@ -208,13 +213,19 @@ int vec_generic_append(vec_t **vec, const void *arr, size_t len, size_t sizeof_t
  * \param index The index of the element to access.
  * \param sizeof_type The size of the vector type.
  * \return A const pointer to the element. */
-const void *vec_generic_ptr(const vec_t *vec, size_t index, size_t sizseof_type);
+const void *vec_generic_ptr(const vec_t *vec, size_t index, size_t sizeof_type);
 
 /** Copies the content of a vector to another vector.
  * \param dst The destination vector. 
  * \param src The source vector.
- * \param sizeof_type The size of the vectors type (they must be the same!).
+ * \param sizeof_type The size of the vector type (they must be the same!).
  * \return 0 on success or 1 on failure. */
 int vec_generic_cpy(vec_t **dst, const vec_t *src, size_t sizeof_type);
+
+/** Returns the capacity of the vector.
+ * \param vec The vector to be accessed.
+ * \param sizeof_type The size of the vector type.
+ * \return The capacity of the vector or (size_t)-1 on failure. */
+size_t vec_generic_capacity(const vec_t *vec, size_t sizeof_type);
 
 #endif

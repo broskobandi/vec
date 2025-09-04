@@ -416,6 +416,18 @@ void test_vec_generic_cpy() {
 		vec = vec_generic_new(sizeof(int));
 		ASSERT(vec_generic_cpy(&vec, vec2, sizeof(int)));
 		ASSERT(vec_generic_cpy(&vec, vec2, sizeof(int)));
+		ASSERT(!vec_generic_del(&vec, sizeof(int)));
+	}
+}
+
+void test_vec_generic_capacity() {
+	{ // Normal case
+		vec_t *vec = vec_generic_new(sizeof(int));
+		ASSERT(vec_generic_capacity(vec, sizeof(int)) == DEFAULT_CAPACITY);
+		ASSERT(!vec_generic_del(&vec, sizeof(int)));
+	}
+	{ // Invalid argument
+		ASSERT(vec_generic_capacity(NULL, 0));
 	}
 }
 
@@ -581,5 +593,13 @@ void test_vec_int_cpy() {
 		ASSERT(!vec_int_push(&vec, 5));
 		vec_int_t *vec2 = vec_int_new();
 		ASSERT(!vec_int_cpy(&vec2, vec));
+	}
+}
+
+void test_vec_int_capacity() {
+	{ // Normal case
+		vec_int_t *vec = vec_int_new();
+		ASSERT(vec_int_capacity(vec) == DEFAULT_CAPACITY);
+		ASSERT(!vec_int_del(&vec));
 	}
 }

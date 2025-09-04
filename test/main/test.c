@@ -30,6 +30,7 @@ int main(void) {
 	test_vec_generic_append();
 	test_vec_generic_ptr();
 	test_vec_generic_cpy();
+	test_vec_generic_capacity();
 
 	/** 
 	 * Type-specific vector - public functions
@@ -47,6 +48,7 @@ int main(void) {
 	test_vec_int_append();
 	test_vec_int_ptr();
 	test_vec_int_cpy();
+	test_vec_int_capacity();
 
 	test_print_results();
 

@@ -112,6 +112,12 @@ int main(void) {
 	VEC(intptr) *new_vec_intptr = VEC_NEW(intptr);
 	VEC_CPY(intptr, &new_vec_intptr, vec_intptr);
 
+	/* Get the capacity of the vector. */
+	printf("Capacity of integer vec: %lu\n", VEC_CAPACITY(int, vec_int));
+	printf("Capacity of float vec: %lu\n", VEC_CAPACITY(float, vec_float));
+	printf("Capacity of obj vec: %lu\n", VEC_CAPACITY(obj_t, vec_obj));
+	printf("Capacity of ptr vec: %lu\n", VEC_CAPACITY(intptr, vec_intptr));
+
 	/* Don't forget to delete the vectors. */
 	VEC_DEL(int, &vec_int);
 	VEC_DEL(float, &vec_float);

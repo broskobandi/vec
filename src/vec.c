@@ -103,7 +103,7 @@ int vec_generic_remove(vec_t **vec, size_t index, size_t sizeof_type) {
  * \return The length of the vector.*/
 size_t vec_generic_len(const vec_t *vec) {
 	if (!vec) RET_ERR("'vec' cannot be NULL.", (size_t)-1);
-	return vec->len;
+	RET_OK(vec->len);
 }
 
 /** Appends an array at the end of the vector.
@@ -131,10 +131,24 @@ const void *vec_generic_ptr(const vec_t *vec, size_t index, size_t sizseof_type)
 	RET_OK(vec_ptr(vec, index));
 }
 
+/** Copies the content of a vector to another vector.
+ * \param dst The destination vector. 
+ * \param src The source vector.
+ * \param sizeof_type The size of the vectors type (they must be the same!).
+ * \return 0 on success or 1 on failure. */
 int vec_generic_cpy(vec_t **dst, const vec_t *src, size_t sizeof_type) {
 	if (!dst || !src || !sizeof_type) RET_ERR("Invalid argument,", 1);
 	if ((*dst)->size != src->size) RET_ERR("Incompatible vectors.", 1);
 	if (src->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
 	if (vec_cpy(dst, src)) RET_ERR("vec_cpy() failed.", 1);
 	RET_OK(0);
+}
+
+/** Returns the capacity of the vector.
+ * \param vec The vector to be accessed.
+ * \param sizeof_type The size of the vector type.
+ * \return The capacity of the vector or (size_t)-1 on failure. */
+size_t vec_generic_capacity(const vec_t *vec, size_t sizeof_type) {
+	if (!vec || !sizeof_type) RET_ERR("Invalid argument.", (size_t)-1);
+	RET_OK(vec->capacity);
 }
