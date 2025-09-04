@@ -156,6 +156,17 @@ void test_vec_append() {
 	}
 }
 
+void test_vec_ptr() {
+	{ // Normal case
+		vec_t *vec = vec_new(sizeof(int));
+		int value = 5;
+		vec_push(&vec, &value);
+		const int *ptr = vec_ptr(vec, 0);
+		ASSERT(*ptr == value);
+		vec_del(&vec);
+	}
+}
+
 /** 
  * Generic vector - public functiong
  * */
@@ -352,6 +363,24 @@ void test_vec_generic_append() {
 	}
 }
 
+void test_vec_generic_ptr() {
+	{ // Normal case
+		vec_t *vec = vec_generic_new(sizeof(int));
+		int value = 5;
+		ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
+		ASSERT(*(int*)vec_generic_ptr(vec, 0, sizeof(int)) == value);
+		ASSERT(!vec_generic_del(&vec, sizeof(int)));
+	}
+	{ // Invalid argument
+		ASSERT(!vec_generic_ptr(NULL, 0, sizeof(int)));
+		vec_t *vec = vec_generic_new(sizeof(int));
+		ASSERT(!vec_generic_ptr(vec, 0, 0));
+		ASSERT(!vec_generic_ptr(vec, 0, sizeof(float)));
+		ASSERT(!vec_generic_ptr(vec, 5, sizeof(float)));
+		ASSERT(!vec_generic_del(&vec, sizeof(int)));
+	}
+}
+
 /** 
  * Type-specific vector - public functions
  * */
@@ -495,5 +524,11 @@ void test_vec_int_append() {
 		int *arr[] = {NULL, NULL, NULL, NULL, NULL, NULL, NULL};
 		ASSERT(!vec_intptr_append(&vec, arr, 7));
 		ASSERT(!vec_intptr_append(&vec, arr, 7));
+	}
+}
+
+void test_vec_int_ptr() {
+	{ // Normal case
+
 	}
 }

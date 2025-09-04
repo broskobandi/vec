@@ -186,4 +186,13 @@ static inline int vec_append(vec_t **vec, const void *arr, size_t len) {
 	RET_OK(0);
 }
 
+/** Returns a const pointer to the 'index'-th element.
+ * \param vec The vector to be accessed.
+ * \param index The index of the element to access.
+ * \return A const pointer to the element. */
+static inline const void *vec_ptr(const vec_t *vec, size_t index) {
+	unsigned char *chardata = (unsigned char*)vec->data;
+	return (void*)&chardata[index];
+}
+
 #endif

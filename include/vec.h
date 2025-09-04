@@ -68,6 +68,9 @@ SOFTWARE.
 	}\
 	static inline int vec_##T##_append(vec_##T##_t **vec, const T *array, size_t len) {\
 		return vec_generic_append((vec_t**)vec, (void*)array, len, sizeof(T));\
+	}\
+	static inline const T *vec_##T##_ptr(const vec_##T##_t *vec, size_t index) {\
+		return (T*)vec_generic_ptr((vec_t*)vec, index, sizeof(T));\
 	}
 
 /** Convenient type alias for the generated vectors. */
@@ -127,6 +130,13 @@ SOFTWARE.
  * \return 0 on success or 1 on failure. */
 #define VEC_APPEND(T, vec, array, len) vec_##T##_append((vec), (array), (len))
 
+/** Returns a const pointer to the 'index'-th element.
+ * \param T the Type of the vector.
+ * \param vec The vector to be accessed.
+ * \param index The index of the element to access.
+ * \return A const pointer to the element. */
+#define VEC_PTR(T, vec, index) vec_##T##_ptr((vec), (index))
+
 /*****************************************************************************
  * Generic api
  *****************************************************************************/
@@ -135,9 +145,9 @@ SOFTWARE.
 typedef struct vec vec_t;
 
 /** Creates a new generic vector.
- * \param size The size of the type of data to be stored in the vector. 
+ * \param sizeof_type The size of the type of data to be stored in the vector. 
  * \return A pointer to the new vector. */
-vec_t *vec_generic_new(size_t size);
+vec_t *vec_generic_new(size_t sizeof_type);
 
 /** Deletes a generic vector.
  * \param vec A pointer to the vector to be deleted.
@@ -182,5 +192,12 @@ size_t vec_generic_len(const vec_t *vec);
  * \param sizeof_type The size of the array type (must be the same as the vec type).
  * \return 0 on success or 1 on failure. */
 int vec_generic_append(vec_t **vec, const void *arr, size_t len, size_t sizeof_type);
+
+/** Returns a const pointer to the 'index'-th element.
+ * \param vec The vector to be accessed.
+ * \param index The index of the element to access.
+ * \param sizeof_type The size of the vector type.
+ * \return A const pointer to the element. */
+const void *vec_generic_ptr(const vec_t *vec, size_t index, size_t sizseof_type);
 
 #endif

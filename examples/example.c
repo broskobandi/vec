@@ -89,19 +89,17 @@ int main(void) {
 	VEC_APPEND(int, &vec_int, ((int[]){1, 2, 3}), 3);
 	VEC_APPEND(float, &vec_float, ((float[]){1.1f, 2.2f, 3.3f}), 3);
 	VEC_APPEND(obj_t, &vec_obj, ((obj_t[]){{0}, {0}, {0}}), 3);
-	// int *ptr1 = malloc(sizeof(int));
-	// int *ptr2 = malloc(sizeof(int));
-	// int *ptr3 = malloc(sizeof(int));
-	// int *ptrarr[] = {
-	// 	malloc(sizeof(int)),
-	// 	malloc(sizeof(int)),
-	// 	malloc(sizeof(int)),
-	// };
-	// VEC_APPEND(intptr, &vec_intptr, ((intptr[]){&value, &value, &value}), 3);
-	// VEC_APPEND(intptr, &vec_intptr, ((int*[]){NULL, NULL, NULL}), 3);
 	vec_intptr_append(&vec_intptr, (int*[]){NULL, NULL, NULL}, 3);
-	// VEC_APPEND(intptr, &vec_intptr, ((intptr[]){ptr1, ptr2, ptr3}), 3);
-	// VEC_APPEND(intptr, &vec_intptr, ptrarr, 3);
+
+	/* Get a const pointer to the stored data. */
+	const int *ptr_to_int = VEC_PTR(int, vec_int, 0);
+	printf("%p\n", ptr_to_int);
+	const float *ptr_to_float = VEC_PTR(float, vec_float, 0);
+	printf("%p\n", ptr_to_float);
+	const obj_t *ptr_to_obj = VEC_PTR(obj_t, vec_obj, 0);
+	printf("%p\n", ptr_to_obj);
+	const intptr *ptr_to_intptr = VEC_PTR(intptr, vec_intptr, 0);
+	printf("%p\n", ptr_to_intptr);
 
 	/* Don't forget to delete the vectors. */
 	VEC_DEL(int, &vec_int);

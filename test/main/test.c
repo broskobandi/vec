@@ -14,6 +14,7 @@ int main(void) {
 	test_vec_at();
 	test_vec_remove();
 	test_vec_append();
+	test_vec_ptr();
 
 	/** 
 	 * Generic vector - public functions
@@ -26,6 +27,7 @@ int main(void) {
 	test_vec_generic_at();
 	test_vec_generic_remove();
 	test_vec_generic_append();
+	test_vec_generic_ptr();
 
 	/** 
 	 * Type-specific vector - public functions
@@ -41,6 +43,7 @@ int main(void) {
 	test_vec_int_remove();
 	test_vec_int_len();
 	test_vec_int_append();
+	test_vec_int_ptr();
 
 	test_print_results();
 

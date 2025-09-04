@@ -14,6 +14,7 @@ void test_vec_pop();
 void test_vec_at();
 void test_vec_remove();
 void test_vec_append();
+void test_vec_ptr();
 
 /** 
  * Generic vector - public functions
@@ -26,6 +27,7 @@ void test_vec_generic_pop();
 void test_vec_generic_at();
 void test_vec_generic_remove();
 void test_vec_generic_append();
+void test_vec_generic_ptr();
 
 /** 
  * Type-specific vector - public functions
@@ -41,5 +43,6 @@ void test_vec_int_at();
 void test_vec_int_remove();
 void test_vec_int_len();
 void test_vec_int_append();
+void test_vec_int_ptr();
 
 #endif

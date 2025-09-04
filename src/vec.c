@@ -118,3 +118,15 @@ int vec_generic_append(vec_t **vec, const void *arr, size_t len, size_t sizeof_t
 	if (vec_append(vec, arr, len)) RET_ERR("vec_append() failed.", 1);
 	RET_OK(0);
 }
+
+/** Returns a const pointer to the 'index'-th element.
+ * \param vec The vector to be accessed.
+ * \param index The index of the element to access.
+ * \param sizeof_type The size of the vector type.
+ * \return A const pointer to the element. */
+const void *vec_generic_ptr(const vec_t *vec, size_t index, size_t sizseof_type) {
+	if (!vec || !sizseof_type) RET_ERR("Invalid argument.", NULL);
+	if (index >= vec->len) RET_ERR("Requested index is out of bounds.", NULL);
+	if (sizseof_type != vec->size) RET_ERR("Invalid pointer.", NULL);
+	RET_OK(vec_ptr(vec, index));
+}
