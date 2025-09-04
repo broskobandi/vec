@@ -130,3 +130,11 @@ const void *vec_generic_ptr(const vec_t *vec, size_t index, size_t sizseof_type)
 	if (sizseof_type != vec->size) RET_ERR("Invalid pointer.", NULL);
 	RET_OK(vec_ptr(vec, index));
 }
+
+int vec_generic_cpy(vec_t **dst, const vec_t *src, size_t sizeof_type) {
+	if (!dst || !src || !sizeof_type) RET_ERR("Invalid argument,", 1);
+	if ((*dst)->size != src->size) RET_ERR("Incompatible vectors.", 1);
+	if (src->size != sizeof_type) RET_ERR("Invalid pointer.", 1);
+	if (vec_cpy(dst, src)) RET_ERR("vec_cpy() failed.", 1);
+	RET_OK(0);
+}

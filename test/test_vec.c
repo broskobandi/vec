@@ -167,6 +167,24 @@ void test_vec_ptr() {
 	}
 }
 
+void test_vec_cpy() {
+	{ // Normal case
+		vec_t *vec = vec_new(sizeof(size_t));
+		for (size_t i = 0; i < DEFAULT_CAPACITY * 10; i++) {
+			ASSERT(!vec_push(&vec, &i));
+		}
+		vec_t *vec2 = vec_new(sizeof(size_t));
+		ASSERT(!vec_cpy(&vec2, vec));
+		ASSERT(!memcmp(vec2, vec, ROUNDUP(sizeof(vec_t) + vec->size * vec->len)));
+		ASSERT(vec2->len == vec->len);
+		ASSERT(vec2->capacity == vec->capacity);
+		ASSERT(vec2->size == vec->size);
+		ASSERT(!memcmp(vec2->data, vec->data, vec->size * vec->len));
+		vec_del(&vec);
+		vec_del(&vec2);
+	}
+}
+
 /** 
  * Generic vector - public functiong
  * */
@@ -381,6 +399,26 @@ void test_vec_generic_ptr() {
 	}
 }
 
+void test_vec_generic_cpy() {
+	{ // Normal case
+		vec_t *vec = vec_generic_new(sizeof(int));
+		int value = 5;
+		ASSERT(!vec_generic_push(&vec, &value, sizeof(int)));
+		vec_t *vec2 = vec_generic_new(sizeof(int));
+		ASSERT(!vec_generic_cpy(&vec2, vec, sizeof(int)));
+		vec_del(&vec);
+	}
+	{ // Invalid argument
+		vec_t *vec = NULL;
+		vec_t *vec2 = NULL;
+		ASSERT(vec_generic_cpy(NULL, NULL, 0));
+		ASSERT(vec_generic_cpy(&vec, vec2, 0));
+		vec = vec_generic_new(sizeof(int));
+		ASSERT(vec_generic_cpy(&vec, vec2, sizeof(int)));
+		ASSERT(vec_generic_cpy(&vec, vec2, sizeof(int)));
+	}
+}
+
 /** 
  * Type-specific vector - public functions
  * */
@@ -529,6 +567,19 @@ void test_vec_int_append() {
 
 void test_vec_int_ptr() {
 	{ // Normal case
+		vec_int_t *vec = vec_int_new();
+		ASSERT(!vec_int_push(&vec, 5));
+		ASSERT(*vec_int_ptr(vec, 0) == 5);
+	}
+}
 
+void test_vec_int_cpy() {
+	{ // Normal case
+		vec_int_t *vec = vec_int_new();
+		ASSERT(!vec_int_push(&vec, 5));
+		ASSERT(!vec_int_push(&vec, 5));
+		ASSERT(!vec_int_push(&vec, 5));
+		vec_int_t *vec2 = vec_int_new();
+		ASSERT(!vec_int_cpy(&vec2, vec));
 	}
 }

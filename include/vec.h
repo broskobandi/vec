@@ -71,6 +71,9 @@ SOFTWARE.
 	}\
 	static inline const T *vec_##T##_ptr(const vec_##T##_t *vec, size_t index) {\
 		return (T*)vec_generic_ptr((vec_t*)vec, index, sizeof(T));\
+	}\
+	static inline int vec_##T##_cpy(vec_##T##_t **dst, const vec_##T##_t *src) {\
+		return vec_generic_cpy((vec_t**)dst, (const vec_t*)src, sizeof(T));\
 	}
 
 /** Convenient type alias for the generated vectors. */
@@ -137,6 +140,13 @@ SOFTWARE.
  * \return A const pointer to the element. */
 #define VEC_PTR(T, vec, index) vec_##T##_ptr((vec), (index))
 
+/** Copies the content of a vector to another vector.
+ * \param T The type of the vectors (they must be of the same type!).
+ * \param dst The destination vector. 
+ * \param src The source vector.
+ * \return 0 on success or 1 on failure. */
+#define VEC_CPY(T, dst, src) vec_##T##_cpy((dst), (src))
+
 /*****************************************************************************
  * Generic api
  *****************************************************************************/
@@ -199,5 +209,12 @@ int vec_generic_append(vec_t **vec, const void *arr, size_t len, size_t sizeof_t
  * \param sizeof_type The size of the vector type.
  * \return A const pointer to the element. */
 const void *vec_generic_ptr(const vec_t *vec, size_t index, size_t sizseof_type);
+
+/** Copies the content of a vector to another vector.
+ * \param dst The destination vector. 
+ * \param src The source vector.
+ * \param sizeof_type The size of the vectors type (they must be the same!).
+ * \return 0 on success or 1 on failure. */
+int vec_generic_cpy(vec_t **dst, const vec_t *src, size_t sizeof_type);
 
 #endif

@@ -101,6 +101,17 @@ int main(void) {
 	const intptr *ptr_to_intptr = VEC_PTR(intptr, vec_intptr, 0);
 	printf("%p\n", ptr_to_intptr);
 
+	/* Copy the vector information to another vector.
+	 * The targetg vector must be initialized. */
+	VEC(int) *new_vec_int = VEC_NEW(int);
+	VEC_CPY(int, &new_vec_int, vec_int);
+	VEC(float) *new_vec_float = VEC_NEW(float);
+	VEC_CPY(float, &new_vec_float, vec_float);
+	VEC(obj_t) *new_vec_obj = VEC_NEW(obj_t);
+	VEC_CPY(obj_t, &new_vec_obj, vec_obj);
+	VEC(intptr) *new_vec_intptr = VEC_NEW(intptr);
+	VEC_CPY(intptr, &new_vec_intptr, vec_intptr);
+
 	/* Don't forget to delete the vectors. */
 	VEC_DEL(int, &vec_int);
 	VEC_DEL(float, &vec_float);

@@ -87,7 +87,7 @@ static inline void vec_del(vec_t **vec) {
 }
 
 static inline int resize(vec_t **vec, size_t new_capacity) {
-	vec_t *tmp = realloc(*vec, new_capacity * (*vec)->size + ROUNDUP(sizeof(vec_t)));
+	vec_t *tmp = (vec_t*)realloc(*vec, new_capacity * (*vec)->size + ROUNDUP(sizeof(vec_t)));
 	if (!tmp) RET_ERR("realloc() failed.", 1);
 	*vec = tmp;
 	(*vec)->capacity = new_capacity;
@@ -107,7 +107,7 @@ static inline int vec_push(vec_t **vec, const void *value) {
 		// (*vec)->capacity = new_capacity;
 		// SET_DATA_PTR(*vec);
 		if (resize(vec, (*vec)->capacity * 2))
-			RET_ERR("Failed to resize vector", 1);
+			RET_ERR("resize() failed", 1);
 	}
 	unsigned char *chardata = (unsigned char*)(*vec)->data;
 	memcpy(&chardata[(*vec)->len * (*vec)->size], value, (*vec)->size);
@@ -132,7 +132,7 @@ static inline int vec_pop(vec_t **vec, void *value) {
 		// (*vec)->capacity = new_capacity;
 		// SET_DATA_PTR(*vec);
 		if (resize(vec, (*vec)->capacity / 2))
-			RET_ERR("Failed to resize vector.", 1);
+			RET_ERR("resize() failed.", 1);
 	}
 	(*vec)->len--;
 	RET_OK(0);
@@ -164,7 +164,7 @@ static inline int vec_remove(vec_t **vec, size_t index) {
 		// (*vec)->capacity = new_capacity;
 		// SET_DATA_PTR(*vec);
 		if (resize(vec, (*vec)->capacity / 2))
-			RET_ERR("Failed to resize vec.", 1);
+			RET_ERR("resize() failed.", 1);
 	}
 	(*vec)->len--;
 	RET_OK(0);
@@ -178,7 +178,7 @@ static inline int vec_remove(vec_t **vec, size_t index) {
 static inline int vec_append(vec_t **vec, const void *arr, size_t len) {
 	while ((*vec)->len + len > (*vec)->capacity) {
 		if (resize(vec, (*vec)->capacity * 2))
-			RET_ERR("Failed to resize vector.", 1);
+			RET_ERR("resize() failed.", 1);
 	}
 	unsigned char *chardata = (unsigned char*)(*vec)->data;
 	memcpy(&chardata[(*vec)->len * (*vec)->size], arr, len * (*vec)->size);
@@ -193,6 +193,18 @@ static inline int vec_append(vec_t **vec, const void *arr, size_t len) {
 static inline const void *vec_ptr(const vec_t *vec, size_t index) {
 	unsigned char *chardata = (unsigned char*)vec->data;
 	return (void*)&chardata[index];
+}
+
+/** Copies the content of a vector to another vector.
+ * \param dst The destination vector. 
+ * \param src The source vector.
+ * \return 0 on success or 1 on failure. */
+static inline int vec_cpy(vec_t **dst, const vec_t *src) {
+	if ((*dst)->capacity != src->capacity)
+		if (resize(dst, src->capacity))
+			RET_ERR("resize() failed.", 1);
+	memcpy(*dst, src, ROUNDUP(sizeof(vec_t)) + src->len * src->size);
+	RET_OK(0);
 }
 
 #endif
