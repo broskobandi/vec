@@ -24,19 +24,47 @@ SOFTWARE.
 
 /** \file src/vec.c
  * \brief Implementation for the vec libary.
- * \details This file contains the definitions of the public funcions 
- * for the vec library. */
+ * \details This file contains the definitions of the public funcions and 
+ * the error utilities for the vec library. */
 
 #include "vec_private.h"
+#include <stdio.h>
+
+typedef struct err {
+	const char *file;
+	const char *func;
+	const char *msg;
+	int line;
+} err_t;
+
+_Thread_local static err_t g_err;
+
+void vec_print_err() {
+	fprintf(
+		stderr,
+		"[VEC_ERROR]:\n\tFile: %s\n\t"
+		"Func: %s\n\tLine: %d\n\tMsg: %s\n"
+		,g_err.file, g_err.func, g_err.line, g_err.msg
+	);
+}
+
+#define RET_ERR(message, return_value)\
+	do {\
+		g_err.file = __FILE__;\
+		g_err.func = __func__;\
+		g_err.line = __LINE__;\
+		g_err.msg = (message);\
+		return (return_value);\
+	} while (0)
 
 /** Creates a new vector.
  * \param sizeof_type The size of the vector's type. 
  * \return A pointer to the vector. */
 vec_t *vec_new(size_t sizeof_type) {
 	vec_t *vec = mem_alloc(sizeof(vec_t));
-	if (!vec) return NULL;
+	if (!vec) RET_ERR("Failed to allocate vector.", NULL);
 	vec->data = mem_alloc(sizeof_type * DEFAULT_CAPACITY);
-	if (!vec->data) return NULL;
+	if (!vec->data) RET_ERR("Failed to allocate vec->data.", NULL);
 	vec->capacity = DEFAULT_CAPACITY;
 	vec->len = 0;
 	vec->sizeof_type = sizeof_type;
@@ -47,12 +75,12 @@ vec_t *vec_new(size_t sizeof_type) {
  * \param vec A pointer to the vector to be deleted.
  * \return 0 on success or 1 on failure. */
 int vec_del(vec_t *vec) {
-	if (!vec) return 1;
+	if (!vec) RET_ERR("Invalid argument.", 1);
 	if (vec->data)
 		if (mem_free(vec->data) == -1)
-			return 1;
+			RET_ERR("Failed to free vec->data.", 1);
 	if (mem_free(vec) == -1)
-		return 1;
+		RET_ERR("Failed to free vec.", 1);
 	return 0;
 }
 
@@ -64,10 +92,10 @@ int vec_del(vec_t *vec) {
  * \return 0 on success or 1 on failure. */
 int vec_push_back(vec_t *vec, const void *value, size_t sizeof_type) {
 	if (!vec || !value || sizeof_type != vec->sizeof_type)
-		return 1;
+		RET_ERR("Invlid argument.", 1);
 	if (vec->len + 1 > vec->capacity)
 		if (resize(vec, vec->capacity * 2))
-			return 1;
+			RET_ERR("Failed to resize vec.", 1);
 	memcpy(&vec->data[vec->len * sizeof_type], value, sizeof_type);
 	vec->len++;
 	return 0;
@@ -81,10 +109,10 @@ int vec_push_back(vec_t *vec, const void *value, size_t sizeof_type) {
  * \return 0 on success or 1 on failure. */
 int vec_push_front(vec_t *vec, const void *value, size_t sizeof_type) {
 	if (!vec || !value || sizeof_type != vec->sizeof_type)
-		return 1;
+		RET_ERR("Invalid argument.", 1);
 	if (vec->len + 1 > vec->capacity)
 		if (resize(vec, vec->capacity * 2))
-			return 1;
+			RET_ERR("Failed to resize vec.", 1);
 	memmove(&vec->data[sizeof_type], vec->data, vec->len * sizeof_type);
 	memcpy(vec->data, value, sizeof_type);
 	vec->len++;
@@ -100,7 +128,7 @@ int vec_push_front(vec_t *vec, const void *value, size_t sizeof_type) {
  * \return 0 on success or 1 on failure. */
 int vec_pop_back(vec_t *vec, void *value, size_t sizeof_type) {
 	if (!vec || sizeof_type != vec->sizeof_type)
-		return 1;
+		RET_ERR("Invalid argument.", 1);
 	if (value)
 		memcpy(value, &vec->data[(vec->len - 1) * sizeof_type], sizeof_type);
 	if (
@@ -108,7 +136,7 @@ int vec_pop_back(vec_t *vec, void *value, size_t sizeof_type) {
 		vec->capacity / 2 >= DEFAULT_CAPACITY
 	) {
 		if (resize(vec, vec->capacity / 2))
-			return 1;
+			RET_ERR("Failed to resize vec.", 1);
 	}
 	vec->len--;
 	return 0;
@@ -123,7 +151,7 @@ int vec_pop_back(vec_t *vec, void *value, size_t sizeof_type) {
  * \return 0 on success or 1 on failure. */
 int vec_pop_front(vec_t *vec, void *value, size_t sizeof_type) {
 	if (!vec || sizeof_type != vec->sizeof_type)
-		return 1;
+		RET_ERR("Invalid argument.", 1);
 	if (value)
 		memcpy(value, vec->data, sizeof_type);
 	memmove(vec->data, &vec->data[sizeof_type], vec->len * sizeof_type);
@@ -132,7 +160,7 @@ int vec_pop_front(vec_t *vec, void *value, size_t sizeof_type) {
 		vec->capacity / 2 >= DEFAULT_CAPACITY
 	) {
 		if (resize(vec, vec->capacity / 2))
-			return 1;
+			RET_ERR("Failed to resize vec.", 1);
 	}
 	vec->len--;
 	return 0;
@@ -142,7 +170,8 @@ int vec_pop_front(vec_t *vec, void *value, size_t sizeof_type) {
  * \param vec A pointer to the vector to be accessed. 
  * \return The length of the vector or (size_t)-1 on failure. */
 size_t vec_len(const vec_t *vec) {
-	if (!vec) return (size_t)-1;
+	if (!vec)
+		RET_ERR("Invalid argument.", (size_t)-1);
 	return vec->len;
 }
 
@@ -150,7 +179,8 @@ size_t vec_len(const vec_t *vec) {
  * \param vec A pointer to the vector to be accessed. 
  * \return The capacity of the vector or (size_t)-1 on failure. */
 size_t vec_capacity(const vec_t *vec) {
-	if (!vec) return (size_t)-1;
+	if (!vec)
+		RET_ERR("Invalid argument.", (size_t)-1);
 	return vec->capacity;
 }
 
@@ -159,7 +189,8 @@ size_t vec_capacity(const vec_t *vec) {
  * \param index The index of the member to be removed.
  * \return 0 on success or 1 on failure. */
 int vec_remove(vec_t *vec, size_t index) {
-	if (!vec || index >= vec->len) return 1;
+	if (!vec || index >= vec->len)
+		RET_ERR("Invalid argument.", 1);
 
 	size_t len_to_move = vec->len - index - 1;
 	memmove(
@@ -171,7 +202,7 @@ int vec_remove(vec_t *vec, size_t index) {
 		vec->capacity / 2 >= DEFAULT_CAPACITY
 	) {
 		if (resize(vec, vec->capacity / 2))
-			return 1;
+			RET_ERR("Failed to resize vec.", 1);
 	}
 	vec->len--;
 
@@ -190,12 +221,12 @@ int vec_insert(vec_t *vec, const void *value, size_t index, size_t sizeof_type) 
 		!vec || !value || index >= vec->len ||
 		sizeof_type != vec->sizeof_type
 	) {
-		return 1;
+		RET_ERR("Invalid argument.", 1);
 	}
 
 	if (vec->len + 1 > vec->capacity)
 		if (resize(vec, vec->capacity * 2))
-			return 1;
+			RET_ERR("Failed to resize vec.", 1);
 	size_t len_to_move = vec->len - index;
 	memmove(
 		&vec->data[(index + 1) * sizeof_type],
@@ -219,7 +250,7 @@ int vec_at(const vec_t *vec, void *value, size_t index, size_t sizeof_type) {
 		!vec || !value || index >= vec->len ||
 		sizeof_type != vec->sizeof_type
 	) {
-		return 1;
+		RET_ERR("Invalid argument.", 1);
 	}
 
 	memcpy(value, &vec->data[index * sizeof_type], sizeof_type);
@@ -236,14 +267,14 @@ int vec_at(const vec_t *vec, void *value, size_t index, size_t sizeof_type) {
  * \return 0 on success or 1 on failure. */
 int vec_append(vec_t *vec, const void *arr, size_t len, size_t sizeof_type) {
 	if (!vec || !arr || sizeof_type != vec->sizeof_type)
-		return 1;
+		RET_ERR("Invalid argument.", 1);
 
 	size_t required_capacity =
 		((vec->len + len + DEFAULT_CAPACITY - 1) &
 		 ~(DEFAULT_CAPACITY - 1));
 	if (required_capacity > vec->capacity)
 		if (resize(vec, required_capacity))
-			return 1;
+			RET_ERR("Failed to resize vec.", 1);
 
 	memcpy(&vec->data[vec->len * sizeof_type], arr, len * sizeof_type);
 
@@ -261,14 +292,14 @@ int vec_append(vec_t *vec, const void *arr, size_t len, size_t sizeof_type) {
  * \return 0 on success or 1 on failure. */
 int vec_prepend(vec_t *vec, const void *arr, size_t len, size_t sizeof_type) {
 	if (!vec || !arr || sizeof_type != vec->sizeof_type)
-		return 1;
+		RET_ERR("Invalid argument.", 1);
 
 	size_t required_capacity =
 		((vec->len + len + DEFAULT_CAPACITY - 1) &
 		 ~(DEFAULT_CAPACITY - 1));
 	if (required_capacity > vec->capacity)
 		if (resize(vec, required_capacity))
-			return 1;
+			RET_ERR("Failed to resize vec.", 1);
 
 	memmove(&vec->data[len * sizeof_type], vec->data, vec->len * sizeof_type);
 	memcpy(vec->data, arr, len * sizeof_type);
@@ -286,7 +317,7 @@ int vec_prepend(vec_t *vec, const void *arr, size_t len, size_t sizeof_type) {
  * as the vector's type's).*/
 int vec_replace(vec_t *vec, const void *value, size_t index, size_t sizeof_type) {
 	if (!vec || !value || index >= vec->len || sizeof_type != vec->sizeof_type)
-		return 1;
+		RET_ERR("Invalid argument.", 1);
 
 	memcpy(&vec->data[index * sizeof_type], value, sizeof_type);
 
@@ -309,7 +340,7 @@ int vec_replace_range(
 		!vec || !arr || index >= vec->len || range > vec->len ||
 		sizeof_type != vec->sizeof_type)
 	{
-		return 1;
+		RET_ERR("Invalid argument.", 1);
 	} 
 
 	size_t required_capacity =
@@ -321,7 +352,7 @@ int vec_replace_range(
 		 vec->capacity / 2 >= DEFAULT_CAPACITY)
 	) {
 		if (resize(vec, required_capacity))
-			return 1;
+			RET_ERR("Failed to resize vec.", 1);
 	}
 
 	void *src = &vec->data[(index + range) * sizeof_type];
@@ -339,6 +370,7 @@ int vec_replace_range(
  * \param index The index to return a pointer to.
  * \return A pointer to the member or NULL on failure. */
 const void *vec_view(const vec_t *vec, size_t index) {
-	if (!index || index >= vec->len) return NULL;
+	if (!index || index >= vec->len)
+		RET_ERR("Invalid argument.", NULL);
 	return &vec->data[index * vec->sizeof_type];
 }

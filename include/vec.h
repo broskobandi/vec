@@ -158,4 +158,7 @@ int vec_replace_range(
  * \return A pointer to the member or NULL on failure. */
 const void *vec_view(const vec_t *vec, size_t index);
 
+/** Prints error information if exists. */
+void vec_print_err();
+
 #endif
