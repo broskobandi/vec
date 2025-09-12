@@ -1,5 +1,7 @@
 # vec
-Dynamic vector written in C.
+## Dynamic vector written in C.
+The goal of the project is to provide fast, reliable, and safe abstractions
+for vector operations.
 
 ## Features
 ### Encapsulated vector data
