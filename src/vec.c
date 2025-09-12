@@ -370,7 +370,7 @@ int vec_replace_range(
  * \param index The index to return a pointer to.
  * \return A pointer to the member or NULL on failure. */
 const void *vec_view(const vec_t *vec, size_t index) {
-	if (!index || index >= vec->len)
+	if (!vec || index >= vec->len)
 		RET_ERR("Invalid argument.", NULL);
 	return &vec->data[index * vec->sizeof_type];
 }

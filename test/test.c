@@ -378,11 +378,20 @@ void test_replace_range() {
 }
 
 void test_vec_view() {
-	vec_t *vec = vec_new(sizeof(int));
-	int arr[] = {0, 1, 2, 3, 4};
-	vec_append(vec, arr, 5, sizeof(int));
-	ASSERT(*(int*)vec_view(vec, 2) == 2);
-	vec_del(vec);
+	{ // normal case
+		vec_t *vec = vec_new(sizeof(int));
+		int arr[] = {0, 1, 2, 3, 4};
+		vec_append(vec, arr, 5, sizeof(int));
+		ASSERT(*(int*)vec_view(vec, 2) == 2);
+		vec_del(vec);
+	}
+	{ // index 0
+		vec_t *vec = vec_new(sizeof(int));
+		int arr[] = {0, 1, 2, 3, 4};
+		vec_append(vec, arr, 5, sizeof(int));
+		ASSERT(*(int*)vec_view(vec, 0) == 0);
+		vec_del(vec);
+	}
 }
 
 int main(void) {
