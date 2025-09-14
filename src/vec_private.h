@@ -38,7 +38,7 @@ SOFTWARE.
 #define DEFAULT_CAPACITY 8LU
 
 /** The definition of the opaaque vector struct. */
-struct vec {
+struct vec_generic {
 	/** A pointer to the allocated data. */
 	void *data;
 
@@ -56,7 +56,7 @@ struct vec {
  * \param vec A pointer to the vector to be modified.
  * \param new_capacity The new capacity to be used.
  * \return 0 on failure or 1 on success. */
-static inline int resize(vec_t *vec, size_t new_capacity) {
+static inline int resize(vec_generic_t *vec, size_t new_capacity) {
 	void *tmp = mem_realloc(vec->data, new_capacity);
 	if (tmp) {
 		vec->data = tmp;

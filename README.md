@@ -116,4 +116,5 @@ make doc
 ```
 Then open doc/html/index.html to view the documentation.
 ## Todo
-- Test more edge cases
+- Test more edge cases.
+- Set error states upon function failures in generated type-safe wrappers.

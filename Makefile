@@ -4,7 +4,7 @@ FIND_CC := $(shell command -v clang || command -v gcc)
 CC := $(FIND_CC)
 CFLAGS := -Wall -Wextra -Werror -Wunused-result -Wconversion
 CPPFLAGS := -Iinclude -Isrc
-LDFLAGS := -L/usr/local/mem_alloc -lmem_alloc
+LDFLAGS := -L/usr/local/lib -lmem_alloc
 
 # Dirs
 BUILD_DIR := build
@@ -38,7 +38,7 @@ test: CC := bear -- $(FIND_CC)
 test: $(TEST_EXE)
 	./$<
 
-example: LDFLAGS := -L/usr/local/lib -lvec
+example: LDFLAGS := -L/usr/local/lib -lvec -lmem_alloc
 example: $(EXAMPLE_EXE)
 	./$<
 
