@@ -16,3 +16,5 @@ target_include_directories(${PROJECT_NAME}-static PRIVATE include)
 
 add_executable(test EXCLUDE_FROM_ALL test/test.c)
 target_include_directories(test PRIVATE include)
+
+target_compile_options(test PRIVATE -Wall -Wextra -Wunused-result -Wconversion)
