@@ -32,9 +32,9 @@ LIB_ST := $(LIB_DIR)/$(LIB_ST_NAME)
 TEST_BIN := $(BUILD_DIR)/test
 EXAMPLE_BIN := $(BUILD_DIR)/example
 
-.PHONY: all test example clean distclean install
+.PHONY: debug test example clean distclean install
 
-all: $(LIB_SH) $(LIB_ST)
+debug: $(LIB_SH) $(LIB_ST)
 
 test: $(TEST_BIN)
 	@./$<
