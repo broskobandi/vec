@@ -8,6 +8,7 @@
 #define VEC_NEW_WITH_CAPACITY(T, capacity) vec_##T##_new_with_capacity((capacity))
 #define VEC_DEL(vec) vec.del(&(vec))
 #define VEC_PUSH(vec, data) vec.push(&vec, (data))
+#define VEC_POP(vec) vec.pop(&vec)
 #define VEC_AT(vec, index) vec.at(&vec, index)
 #define VEC_AT_CONST(vec, index) vec.at_const(&vec, index)
 #define VEC_CLEAR(vec) vec.clear(&vec)
@@ -20,7 +21,9 @@
 	typedef struct vec_##T vec_##T##_t;\
 	struct vec_##T {\
 		vec_t *__priv;\
+		int is_init;\
 		int (*push)(vec_##T##_t *self, T data);\
+		int (*pop)(vec_##T##_t *self);\
 		T *(*at)(vec_##T##_t *self, size_t index);\
 		const T *(*at_const)(const vec_##T##_t *self, size_t index);\
 		int (*clear)(vec_##T##_t *self);\
@@ -33,6 +36,10 @@
 	[[maybe_unused]]\
 	static inline int vec_##T##_push(vec_##T##_t *self, T data) {\
 		return vec_push(self->__priv, sizeof(T), (const void*)&data);\
+	}\
+	[[maybe_unused]]\
+	static inline int vec_##T##_pop(vec_##T##_t *self) {\
+		return vec_pop(self->__priv, sizeof(T));\
 	}\
 	[[maybe_unused]]\
 	static inline T *vec_##T##_at(vec_##T##_t *self, size_t index) {\
@@ -70,7 +77,9 @@
 	vec_##T##_t vec_##T##_new() {\
 		vec_##T##_t vec = {0};\
 		vec.__priv = vec_new(sizeof(T));\
+		if (!vec.__priv) vec.is_init = 0;\
 		vec.push = vec_##T##_push;\
+		vec.pop = vec_##T##_pop;\
 		vec.at = vec_##T##_at;\
 		vec.at_const = vec_##T##_at_const;\
 		vec.clear = vec_##T##_clear;\
@@ -83,8 +92,10 @@
 	}\
 	vec_##T##_t vec_##T##_new_with_capacity(size_t capacity) {\
 		vec_##T##_t vec = {0};\
+		if (!vec.__priv) vec.is_init = 0;\
 		vec.__priv = vec_new_with_capacity(sizeof(T), capacity);\
 		vec.push = vec_##T##_push;\
+		vec.pop = vec_##T##_pop;\
 		vec.at = vec_##T##_at;\
 		vec.at_const = vec_##T##_at_const;\
 		vec.clear = vec_##T##_clear;\
@@ -100,6 +111,7 @@ typedef struct vec vec_t;
 vec_t *vec_new(size_t sizeof_type);
 vec_t *vec_new_with_capacity(size_t sizeof_type, size_t capacity);
 int vec_push(vec_t *vec, size_t sizeof_type, const void *data);
+int vec_pop(vec_t *vec, size_t sizeof_type);
 void *vec_at(vec_t *vec, size_t sizeof_type, size_t index);
 const void *vec_at_const(const vec_t *vec, size_t sizeof_type, size_t index);
 int vec_clear(vec_t *vec, size_t sizeof_type);

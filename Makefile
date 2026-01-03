@@ -18,11 +18,13 @@ TEST_EXE := $(BUILD_DIR)/test
 WIN_BUILD_DIR := $(BUILD_DIR)/win
 WIN_DLL := $(WIN_BUILD_DIR)/lib$(PROJECT).dll
 WIN_A := $(WIN_BUILD_DIR)/lib$(PROJECT).a
+EXAMPLE_MAIN := example/example.c
+EXAMPLE_EXE := $(BUILD_DIR)/example
 
 LIB_INSTALL_DIR := /usr/local/lib
 INC_INSTALL_DIR := /usr/local/include
 
-.PHONY: debug release test run clean install win
+.PHONY: debug release test clean install win example
 
 debug: CC = bear --output $(BUILD_DIR)/compile_commands.json -- clang
 debug: $(LIB_A) $(LIB_SO)
@@ -31,8 +33,6 @@ release: CFLAGS = -O3 -march=native -flto
 release: $(LIB_A) $(LIB_SO)
 
 test: $(TEST_EXE)
-
-run: $(TEST_EXE)
 	./$<
 
 install: $(LIB_SO) $(LIB_A)
@@ -46,6 +46,8 @@ clean:
 win: CC = x86_64-w64-mingw32-gcc
 win: CFLAGS = -O3 -march=native -flto
 win: $(WIN_DLL) $(WIN_A)
+
+example: $(EXAMPLE_EXE)
 
 $(WIN_A): $(OBJ) | $(WIN_BUILD_DIR)
 	x86_64-w64-mingw32-ar rcs $@ $^
@@ -62,8 +64,11 @@ $(LIB_SO): $(OBJ) | $(BUILD_DIR)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC) | $(OBJ_DIR)
 	$(CC) -c -fPIC $(CFLAGS) $(CPPFLAGS) $< -o $@
 
-$(TEST_EXE): $(TEST_MAIN) $(LIB_A) $(LIB_SO) $(INC) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(TEST_MAIN) $(LIB_SO) -o $(TEST_EXE)
+$(TEST_EXE): $(TEST_MAIN) $(INC) $(LIB_SO) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(LIB_SO) $< -o $@
+
+$(EXAMPLE_EXE): $(EXAMPLE_MAIN) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@ -l$(PROJECT)
 
 $(WIN_BUILD_DIR):
 	mkdir -p $@

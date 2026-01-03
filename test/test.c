@@ -16,16 +16,17 @@ int main(void) {
 		assert(vec2.__priv);
 		VEC_DEL(vec2);
 		assert(!vec2.__priv);
-		assert(!vec_get_err());
 		assert(VEC_PUSH(vec, 5));
-		assert(vec_get_err());
 		assert(VEC_PUSH(vec2, 5.5f));
-		assert(vec_get_err());
 	}
 
-	{ // PUSH
+	{ // PUSH / POP
 		VEC(int) vec = VEC_NEW(int);
 		assert(!VEC_PUSH(vec, 5));
+		assert(VEC_SIZE(vec) == 1);
+		assert(!VEC_POP(vec));
+		assert(VEC_SIZE(vec) == 0);
+		assert(VEC_POP(vec));
 		VEC_DEL(vec);
 	}
 
@@ -58,6 +59,9 @@ int main(void) {
 		assert(VEC_SIZE(vec) == 2);
 		assert(*VEC_AT_CONST(vec, 0) == 1);
 		assert(*VEC_AT_CONST(vec, 1) == 3);
+		assert(!VEC_REMOVE(vec, 0));
+		assert(!VEC_REMOVE(vec, 0));
+		assert(VEC_REMOVE(vec, 0));
 		VEC_DEL(vec);
 	}
 

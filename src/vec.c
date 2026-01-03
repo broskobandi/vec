@@ -6,14 +6,19 @@
 
 #define VEC_DEFAULT_CAPACITY 32LU
 
-static const char *g_err;
+#define VEC_ERR_BUFF_SIZE 512LU
+static char g_err[VEC_ERR_BUFF_SIZE];
 
 const char *vec_get_err() {
 	return g_err;
 }
 
 void set_err(const char *msg) {
-	g_err = msg;
+	const char *vec_err_header = "[VEC_ERROR]: ";
+	if ((strlen(msg) + strlen(vec_err_header) + 1) > VEC_ERR_BUFF_SIZE) {
+		msg = "Vec error buffer overflow.";
+	}
+	sprintf(g_err, "%s %s\n", vec_err_header, msg);
 }
 
 struct vec {
