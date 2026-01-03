@@ -6,7 +6,7 @@
 
 #define VEC_DEFAULT_CAPACITY 32LU
 
-_Thread_local static const char *g_err;
+static const char *g_err;
 
 const char *vec_get_err() {
 	return g_err;
@@ -67,6 +67,27 @@ int vec_push(vec_t *vec, size_t sizeof_type, const void *data) {
 
 	memcpy(vec->data + vec->sizeof_vec * sizeof_type, data, sizeof_type);
 	vec->sizeof_vec++;
+
+	return 0;
+}
+
+int vec_pop(vec_t *vec, size_t sizeof_type) {
+	if (!vec || !vec->data || !vec->sizeof_vec || sizeof_type != vec->sizeof_type) {
+		set_err("Invalid arguments in vec_pop().");
+		return 1;
+	}
+
+	if (vec->sizeof_vec - 1 <= vec->capacity / 2 &&
+		vec->capacity / 2 >= VEC_DEFAULT_CAPACITY
+	) {
+		uint8_t *tmp = (uint8_t*)realloc(vec->data, vec->capacity * sizeof_type / 2);
+		if (!tmp) {
+			set_err("Failed to shrink vector.");
+			return 1;
+		}
+	}
+
+	vec->sizeof_vec--;
 
 	return 0;
 }
