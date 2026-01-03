@@ -63,43 +63,33 @@ SOFTWARE.
 		size_t (*capacity)(const vec_##T##_t *self);\
 		void (*del)(vec_##T##_t *self);\
 	};\
-	[[maybe_unused]]\
 	static inline int vec_##T##_push(vec_##T##_t *self, T data) {\
 		return vec_push(self->__priv, sizeof(T), (const void*)&data);\
 	}\
-	[[maybe_unused]]\
 	static inline int vec_##T##_pop(vec_##T##_t *self) {\
 		return vec_pop(self->__priv, sizeof(T));\
 	}\
-	[[maybe_unused]]\
 	static inline T *vec_##T##_at(vec_##T##_t *self, size_t index) {\
 		return vec_at(self->__priv, sizeof(T), index);\
 	}\
-	[[maybe_unused]]\
 	static inline const T *vec_##T##_at_const(const vec_##T##_t *self, size_t index) {\
 		return vec_at_const(self->__priv, sizeof(T), index);\
 	}\
-	[[maybe_unused]]\
 	static inline int vec_##T##_clear(vec_##T##_t *self) {\
 		return vec_clear(self->__priv, sizeof(T));\
 	}\
-	[[maybe_unused]]\
 	static inline int vec_##T##_remove(vec_##T##_t *self, size_t index) {\
 		return vec_remove(self->__priv, sizeof(T), index);\
 	}\
-	[[maybe_unused]]\
 	static inline int vec_##T##_insert(vec_##T##_t *self, size_t index, T data) {\
 		return vec_insert(self->__priv, sizeof(T), index, (const void*)&data);\
 	}\
-	[[maybe_unused]]\
 	static inline size_t vec_##T##_size(const vec_##T##_t *self) {\
 		return vec_size(self->__priv, sizeof(T));\
 	}\
-	[[maybe_unused]]\
 	static inline size_t vec_##T##_capacity(const vec_##T##_t *self) {\
 		return vec_capacity(self->__priv, sizeof(T));\
 	}\
-	[[maybe_unused]]\
 	static inline void vec_##T##_del(vec_##T##_t *self) {\
 		vec_del(self->__priv, sizeof(T));\
 		self->__priv = NULL;\

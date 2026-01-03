@@ -1,6 +1,7 @@
+/* Include the library. */
+#include <vec.h>
 #include <assert.h>
 #include <stdio.h>
-#include <vec.h>
 
 /* Generate code for the desired vector type.
  * (Be sure to use a type alias for pointer types
