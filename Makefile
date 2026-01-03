@@ -75,7 +75,7 @@ $(EXAMPLE_BIN): $(EXAMPLE_MAIN) | $(BUILD_DIR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/%.h | $(OBJ_DIR)
 	@echo Building $@...
-	@$(CC) -c $(CFLAGS) $(CPPFLAGS) $< -o $@
+	@$(CC) -c -fPIC $(CFLAGS) $(CPPFLAGS) $< -o $@
 	@echo Done"\n"
 
 $(BUILD_DIR):
