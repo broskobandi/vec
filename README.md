@@ -18,13 +18,8 @@ Regardless of all this, the library still provides
 type-safety to an extent the language allows with as 
 little overhead as possible.
 ## Installation:
-```bash
-git clone https://github.com/broskobandi/vec.git &&
-cd vec &&
-make release && # or make debug &&
-make test && # to run the tests, optional but recommended
-sudo make install # if you want to install the library
-```
+Download and clone [the repo](https://github.com/broskobandi/vec.git) and 
+run the relevant shell script.
 ## Usage:
 ```c
 #include <vec.h>
