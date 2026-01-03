@@ -1,3 +1,33 @@
+/*
+MIT License
+
+Copyright (c) 2025 broskobandi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/** \file include/vec.h
+ * \brief Public header file fod the vec library. 
+ * \details This file contains the macro wrappers, static inline function 
+ * declarations and the generic function prototypes and the corresponding 
+ * vector typedefs. */
+
 #ifndef VEC_H
 #define VEC_H
 
@@ -107,19 +137,112 @@
 		return vec;\
 	}
 
+/** Opaque vector type. */
 typedef struct vec vec_t;
+
+/** Creates a new vec_t on the heap with the default capacity.
+ * \param sizeof_type The size of the desired tpye.
+ * \returns A pointer to the allocated vector object or NULL
+ * on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 vec_t *vec_new(size_t sizeof_type);
+
+/** Creates a new vec_t on the heap with the specified capacity.
+ * \param sizeof_type The size of the underlying type.
+ * \param capacity The desired capacity expressed by the number of elements
+ * and not bytes.
+ * \returns A pointer to the allocated vector object or NULL
+ * on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 vec_t *vec_new_with_capacity(size_t sizeof_type, size_t capacity);
+
+/** Appends an element at the end of the vector, reallocating it if necessary.
+ * \param vec A pointer to the vector.
+ * \param sizeof_type The size of the underlying type.
+ * \param data A pointer to the data to be appended.
+ * \returns 0 on success or 1 on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 int vec_push(vec_t *vec, size_t sizeof_type, const void *data);
+
+/** Remove the last element of the vector, shrinking it if necessary.
+ * \param vec A pointer to the vector.
+ * \param sizeof_type The size of the underlying type.
+ * \returns 0 on success or 1 on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 int vec_pop(vec_t *vec, size_t sizeof_type);
+
+/** Get a non-const reference to a specific member of the vector.
+ * \param vec A pointer to the vector.
+ * \param sizeof_type The size of the underlying type.
+ * \param index The index of the element.
+ * \returns A non-const pointer to the element or NULL on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 void *vec_at(vec_t *vec, size_t sizeof_type, size_t index);
+
+/** Get a const reference to a specific member of the vector.
+ * \param vec A pointer to the vector.
+ * \param sizeof_type The size of the underlying type.
+ * \param index The index of the element.
+ * \returns A non-const pointer to the element or NULL on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 const void *vec_at_const(const vec_t *vec, size_t sizeof_type, size_t index);
+
+/** Clear the vector shrinking it to the default capacity if necessary.
+ * \param vec A pointer to the vector.
+ * \param sizeof_type The size of the underlying type.
+ * \returns 0 on sucecss or 1 on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 int vec_clear(vec_t *vec, size_t sizeof_type);
+
+/** Remove a specific element in the vector, shrinking it if necessary.
+ * \param vec A pointer to the vector.
+ * \param sizeof_type The size of the underlying type.
+ * \param index The index of the element.
+ * \returns 0 on sucecss or 1 on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 int vec_remove(vec_t *vec, size_t sizeof_type, size_t index);
+
+/** Insert data into the vector, expanding it if necessary.
+ * \param vec A pointer to the vector.
+ * \param sizeof_type The size of the underlying type.
+ * \param index The index of the element.
+ * \param data A pointer to the data to be inserted.
+ * \returns 0 on sucecss or 1 on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 int vec_insert(vec_t *vec, size_t sizeof_type, size_t index, const void *data);
+
+/** Get the number of elements in the vector.
+ * \param vec A pointer to the vector.
+ * \param sizeof_type The size of the underlying type.
+ * \returns The number of elements or (size_t)-1 on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 size_t vec_size(const vec_t *vec, size_t sizeof_type);
+
+/** Get the capacity of the vector expressed by the current maximum
+ * number of elements.
+ * \param vec A pointer to the vector.
+ * \param sizeof_type The size of the underlying type.
+ * \returns The capacity or (size_t)-1 on failure.
+ * In the event of failure, the generated error string can be queried with
+ * vec_get_err(). */
 size_t vec_capacity(const vec_t  *vec, size_t sizeof_type);
+
+/** Cleans up all the allocated data associated with the vector.
+ * \param vec A pointer to the vector.
+ * \param sizeof_type The size of the underlying type. */
 void vec_del(vec_t *vec, size_t sizeof_type);
+
+/** Returns a pointer to the internal global error string. */
 const char *vec_get_err();
 
 #endif
