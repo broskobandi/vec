@@ -1,4 +1,4 @@
-# VEC
+# vec
 ## Yet another dynamic vector written in C.
 The goal of the project is to provide a simple dynamic 
 vector tool for C programs. The old version can be found
