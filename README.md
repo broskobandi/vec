@@ -32,7 +32,7 @@ sudo ./install-release.sh
 # For building the Windows debug version run:
 ./win-debug.sh
 # For building the Windows release version run:
-./win-release.sh # The windows release
+./win-release.sh
 
 ```
 ## Usage:
