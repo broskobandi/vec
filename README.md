@@ -19,7 +19,22 @@ type-safety to an extent the language allows with as
 little overhead as possible.
 ## Installation:
 Download and clone [the repo](https://github.com/broskobandi/vec.git) and 
-run the relevant shell script.
+run the relevant shell script or command:
+```bash
+# For building the Linux debug version simply run:
+make
+# For installing the Linux debug version, run:
+sudo make install
+# For building the Linux release version run:
+./release.sh
+# For installing the Linux release version run:
+sudo ./install-release.sh
+# For building the Windows debug version run:
+./win-debug.sh
+# For building the Windows release version run:
+./win-release.sh # The windows release
+
+```
 ## Usage:
 ```c
 #include <vec.h>
