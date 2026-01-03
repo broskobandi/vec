@@ -93,11 +93,13 @@ SOFTWARE.
 	static inline void vec_##T##_del(vec_##T##_t *self) {\
 		vec_del(self->__priv, sizeof(T));\
 		self->__priv = NULL;\
+		self->is_init = 0;\
 	}\
 	vec_##T##_t vec_##T##_new() {\
 		vec_##T##_t vec = {0};\
 		vec.__priv = vec_new(sizeof(T));\
 		if (!vec.__priv) vec.is_init = 0;\
+		vec.is_init = 1;\
 		vec.push = vec_##T##_push;\
 		vec.pop = vec_##T##_pop;\
 		vec.at = vec_##T##_at;\
@@ -113,6 +115,7 @@ SOFTWARE.
 	vec_##T##_t vec_##T##_new_with_capacity(size_t capacity) {\
 		vec_##T##_t vec = {0};\
 		if (!vec.__priv) vec.is_init = 0;\
+		vec.is_init = 1;\
 		vec.__priv = vec_new_with_capacity(sizeof(T), capacity);\
 		vec.push = vec_##T##_push;\
 		vec.pop = vec_##T##_pop;\

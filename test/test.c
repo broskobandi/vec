@@ -9,8 +9,10 @@ int main(void) {
 	{ // NEW / DEL / CAPACITY
 		VEC(int) vec = VEC_NEW(int);
 		assert(vec.__priv);
+		assert(vec.is_init);
 		assert(VEC_CAPACITY(vec) == 32);
 		VEC_DEL(vec);
+		assert(!vec.is_init);
 		assert(!vec.__priv);
 		VEC(float) vec2 = VEC_NEW_WITH_CAPACITY(float, 512);
 		assert(vec2.__priv);
