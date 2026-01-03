@@ -45,7 +45,7 @@ const char *vec_get_err() {
 }
 
 /** Sets the global error string. */
-void set_err(const char *msg) {
+static inline void set_err(const char *msg) {
 	const char *vec_err_header = "[VEC_ERROR]: ";
 	if ((strlen(msg) + strlen(vec_err_header) + 1) > VEC_ERR_BUFF_SIZE) {
 		msg = "Vec error buffer overflow.";
